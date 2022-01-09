@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useRef, createRef } from "react";
 import useInput from "@hooks/useInput";
+import { useNavigate } from "react-router-dom";
+import { createNumericLiteral } from "typescript";
 
 function idValidator(id: string) {
   if (id.includes("@")) {
@@ -11,11 +13,6 @@ function idValidator(id: string) {
 }
 
 function pwdValidator(password: string) {
-  console.log(
-    password.match(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/
-    )
-  );
   if (
     password.match(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/
@@ -29,21 +26,29 @@ function pwdValidator(password: string) {
 const Login = () => {
   const [id, idEventHandler, setId] = useInput("", idValidator);
   const [password, passwordEventHandler, setPwd] = useInput("", idValidator);
-
+  const navigate = useNavigate();
+  const idRef = useRef<any>();
   const onSubmit = (id: string, password: string) => {
     if (idValidator(id)) {
       console.log("검증완료 id : ", id);
     } else {
-      console.log("검증 실패 id : ", id);
+      console.log("검증실패 id: ", id);
+      window.alert("id 양식이 맞지 않습니다.");
+      setId("");
+      setPwd("");
     }
     if (pwdValidator(password)) {
       console.log("검증완료 password : ", password);
+      navigate("/");
     } else {
       console.log("검증실패 password : ", password);
+      window.alert("password 양식이 맞지 않습니다.");
+      setId("");
+      setPwd("");
+      idRef.current.focus();
     }
-    setId("");
-    setPwd("");
   };
+
   return (
     <form
       onSubmit={(e) => {
@@ -53,10 +58,11 @@ const Login = () => {
     >
       <label htmlFor="id">이메일(아이디)</label>
       <input
-        type="email"
+        type="text"
         name="id"
         value={id}
         onChange={(e) => idEventHandler(e)}
+        ref={idRef}
       ></input>
       <label htmlFor="password">비밀번호</label>
       <input
