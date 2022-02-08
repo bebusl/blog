@@ -1,26 +1,27 @@
-import React, { useRef, createRef } from "react";
+import React, { ClassAttributes, LegacyRef, useRef } from "react";
 import useInput from "@hooks/useInput";
 import { useNavigate } from "react-router-dom";
-import { createNumericLiteral } from "typescript";
-
+import axios from "axios";
 function idValidator(id: string) {
   if (id.includes("@")) {
     const [email, _] = id.split("@");
-    if (email.length > 6 && email.length < 13) {
+    if (email.length > 0 && email.length < 13) {
       return true;
     }
   } else return false;
 }
 
 function pwdValidator(password: string) {
-  if (
-    password.match(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/
-    ) //정규식이 잘 안먹음. 이거 수정하기1!
-  ) {
-    return true;
-  }
-  return false;
+  // if (
+  //   password.match(
+  //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/6840
+
+  //   ) //정규식이 잘 안먹음. 이거 수정하기1!
+  // ) {
+  //   return true;
+  // }
+  // return false;
+  return true;
 }
 
 const Login = () => {
@@ -39,7 +40,18 @@ const Login = () => {
     }
     if (pwdValidator(password)) {
       console.log("검증완료 password : ", password);
-      navigate("/");
+      axios
+        .post(
+          "https://red-otter-56.loca.lt/user/login",
+          {
+            email: id,
+            password: password,
+          },
+          { withCredentials: true }
+        )
+        .then((res) => console.log("로그인 시도 : ", res))
+        .catch((e) => console.log("로그인 시도 실패: ", e));
+      //navigate("/");
     } else {
       console.log("검증실패 password : ", password);
       window.alert("password 양식이 맞지 않습니다.");
