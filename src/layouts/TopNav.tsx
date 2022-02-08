@@ -19,6 +19,13 @@ const TopNavStyle = styled.ul`
   & li:after {
     clear: both;
   }
+  & li:last-child:before {
+    content: "";
+    display: inline-block;
+    width: calc(100vw - 400px);
+    height: auto;
+    background-color: red;
+  }
 `;
 
 const TopNav = () => {
@@ -27,6 +34,7 @@ const TopNav = () => {
       <li>nav1</li>
       <li>nav2</li>
       <li>nav3</li>
+      <li>로그인</li>
     </TopNavStyle>
   );
 };
