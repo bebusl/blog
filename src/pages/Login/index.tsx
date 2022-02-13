@@ -1,7 +1,9 @@
-import React, { ClassAttributes, LegacyRef, useRef } from "react";
+import React, { useRef } from "react";
 import useInput from "@hooks/useInput";
+import { useSelector, useDispatch } from "react-redux";
+import { login } from "src/store/action";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { client as axios } from "@utils/fetch";
 function idValidator(id: string) {
   if (id.includes("@")) {
     const [email, _] = id.split("@");
@@ -24,11 +26,20 @@ function pwdValidator(password: string) {
   return true;
 }
 
+function setCookie(cookie_name: string, value: string, days: number) {
+  const exDate = new Date();
+  exDate.setDate(exDate.getDate() + days);
+  var cookie_value =
+    escape(value) + (days == null ? "" : "; expires=" + exDate.toUTCString());
+  document.cookie = cookie_name + "=" + cookie_value;
+}
+
 const Login = () => {
   const [id, idEventHandler, setId] = useInput("", idValidator);
   const [password, passwordEventHandler, setPwd] = useInput("", idValidator);
   const navigate = useNavigate();
   const idRef = useRef<any>();
+  const dispatch = useDispatch();
   const onSubmit = (id: string, password: string) => {
     if (idValidator(id)) {
       console.log("검증완료 id : ", id);
@@ -42,15 +53,23 @@ const Login = () => {
       console.log("검증완료 password : ", password);
       axios
         .post(
-          "https://red-otter-56.loca.lt/user/login",
+          "/user/login",
           {
             email: id,
             password: password,
           },
           { withCredentials: true }
         )
-        .then((res) => console.log("로그인 시도 : ", res))
-        .catch((e) => console.log("로그인 시도 실패: ", e));
+        .then((res) => {
+          setCookie("refreshToken", res.data.refresh_token, 7);
+          dispatch(login(res.data.user, res.data.auth_token));
+          navigate("/");
+        })
+        .catch((e) => {
+          console.log(e);
+          window.alert("로그인에 실패했습니다.");
+          idRef.current.focus();
+        });
       //navigate("/");
     } else {
       console.log("검증실패 password : ", password);
