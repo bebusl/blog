@@ -2,17 +2,16 @@ import React from "react";
 import { render } from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./src/App";
-// import { ApolloProvider } from "@apollo/react-hooks";
-// import ApolloClient from "apollo-boost";
-import {
-  ApolloClient,
-  ApolloProvider,
-  HttpLink,
-  InMemoryCache,
-} from "@apollo/client";
+import { Provider } from "react-redux";
+
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+
 import { createUploadLink } from "apollo-upload-client";
+import store from "src/store/store";
+
 const httpLink = createUploadLink({
-  uri: "https://weak-warthog-29.loca.lt/graphql",
+  uri: "https://cold-cougar-89.loca.lt/graphql",
+  credentials: "same-origin",
 });
 
 const client = new ApolloClient({
@@ -22,9 +21,11 @@ const client = new ApolloClient({
 
 render(
   <ApolloProvider client={client}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </ApolloProvider>,
   document.querySelector("#root")
 );
