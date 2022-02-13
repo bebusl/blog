@@ -1,8 +1,9 @@
-import React, { FormEvent, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useMutation, gql } from "@apollo/client";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
-
+//validation해야하고, focus하는 거 하고 keypress hook만들어두자~
 const SplitView = styled.div`
   display: flex;
   justify-content: center;
@@ -16,29 +17,89 @@ const SplitView = styled.div`
 `;
 
 const Tag = styled.button`
-  background-color: white;
+  color: #d3cdcd;
+  font-size: 0.7rem;
+  background-color: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  border: 1px solid gray;
-  box-shadow: gray 5px 5px 5px;
+  border: 1px solid #d3cdcd;
+  box-shadow: gray 1px 1px 5px;
 `;
 
 const Writing = () => {
   const [attachment, setAttachment] = useState("");
-  const [tags, setTags] = useState<any>([]);
-  const [innertext, setInnerText] = useState<any>("");
-  const [markdown, setMarkdown] = useState("");
+  const [tags, setTags] = useState<any>(["태그1", "태그2"]);
+  const [title, setTitle] = useState<any>("테스트 타이틀");
+  const [markdown, setMarkdown] = useState("테스트 컨텐츠 내용");
   const tagRef = useRef<any>(null);
+  const navigate = useNavigate();
   const SEND_FILE = gql`
-    mutation upload($file: Upload) {
+    mutation upload($file: Upload!) {
       upload(file: $file) {
         realName
         fileId
+        originalName
       }
     }
   `;
-  const [sendFile, { loading, error, data }] = useMutation(SEND_FILE, {
+  const POSTING = gql`
+    mutation createPost(
+      $title: String!
+      $tags: [String]!
+      $content: String
+      $thumbnail: ID
+    ) {
+      createPost(
+        input: {
+          title: $title
+          tags: $tags
+          content: $content
+          thumbnail: $thumbnail
+        }
+      ) {
+        postId
+        tags
+      }
+    }
+  `;
+
+  const [posting, { loading, error, data }] = useMutation(POSTING, {
+    onError: (error) => {
+      console.error("에러남", error);
+    },
     onCompleted: (data) => {
-      console.log("완료! ,", data);
+      console.log("성공", data);
+      navigate("/");
+    },
+    context: {
+      headers: {
+        authorization: `Bearer ${window.localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      },
+    },
+  });
+
+  const [upload, result] = useMutation(SEND_FILE, {
+    onCompleted: (data) => {
+      console.log(data);
+      const {
+        upload: { fileId },
+      } = data;
+      //const { fileId } = data;
+      posting({
+        variables: {
+          title: title,
+          tags: tags,
+          content: markdown,
+          thumbnail: fileId,
+        },
+      });
+    },
+
+    context: {
+      headers: {
+        authorization: `Bearer ${window.localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      },
     },
   });
 
@@ -47,13 +108,35 @@ const Writing = () => {
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
-          sendFile({ variables: { file: attachment } });
+          upload({
+            variables: {
+              file: attachment,
+            },
+          });
+          // posting({
+          //   variables: {
+          //     title: title,
+          //     tags: tags,
+          //     content: markdown,
+          //     file: attachment,
+          //   },
+          // });
+          //sendFile({ variables: { file: attachment } });
         }}
       >
+        <label htmlFor="title">제목</label>
+        <input
+          type="text"
+          name="title"
+          value={title}
+          onInput={(e) => {
+            e.preventDefault();
+            setTitle(e.currentTarget.value);
+          }}
+        ></input>
+
         <div>
-          {tags.map((tag: any) => {
-            return <Tag>{tag}</Tag>;
-          })}
+          <span>태그</span>
           <span
             style={{
               display: "inline-block",
@@ -66,15 +149,16 @@ const Writing = () => {
             onKeyPress={(e) => {
               const text = tagRef.current.innerText.trim();
               if (e.key === "Enter" && text.length > 0) {
-                console.log("useRef", tagRef.current.innerText, tagRef.current);
                 setTags([...tags, text]);
                 tagRef.current.innerText = "";
-                console.log("HTML", tagRef.current.inner);
               }
             }}
-          >
-            {}
-          </span>
+          ></span>
+          <div>
+            {tags.map((tag: any, idx: Number) => {
+              return <Tag key={idx as React.Key}>{tag}</Tag>;
+            })}
+          </div>
         </div>
         <SplitView>
           <textarea
@@ -91,19 +175,10 @@ const Writing = () => {
         <input
           type="file"
           onChange={(e: any) => {
-            console.log("::", e.target.files);
             setAttachment(e.target.files[0]);
           }}
         ></input>
-        <button
-          type="submit"
-          // onClick={(e) => {
-          //   e.preventDefault();
-          //   console.log("글 등록 요청 보냇쎄여~~");
-          // }}
-        >
-          글 작성
-        </button>
+        <button type="submit">글 작성</button>
       </form>
     </>
   );
