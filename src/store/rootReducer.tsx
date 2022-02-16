@@ -1,6 +1,5 @@
-import { LOGIN } from "./action";
+import { LOGIN, LOGOFF } from "./action";
 import { Reducer } from "redux";
-const initialState = {};
 const reducer: Reducer<
   { isLogin: boolean; email: String; authToken: String },
   { type: String; payload: Object }
@@ -12,6 +11,13 @@ const reducer: Reducer<
         isLogin: true,
         ...action.userData,
         authToken: action.authToken,
+      };
+    case LOGOFF:
+      return {
+        ...state,
+        isLogin: false,
+        email: null,
+        authToken: null,
       };
     default:
       return state;

@@ -1,11 +1,17 @@
 export const LOGIN = "LOGIN";
+export const LOGOFF = "LOGOFF";
 
 export const login = (userData: object, auth_token: String) => {
-  console.log("로그인 신호받았습니다");
   return {
     type: LOGIN,
     userData,
     authToken: auth_token,
+  };
+};
+
+export const logoff = () => {
+  return {
+    type: LOGOFF,
   };
 };
 
