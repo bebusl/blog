@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import useInput from "@hooks/useInput";
 import { useSelector, useDispatch } from "react-redux";
+import setCookie from "src/utils/setCookie";
 import { login } from "src/store/action";
 import { useNavigate } from "react-router-dom";
 import { client as axios } from "@utils/fetch";
@@ -26,14 +27,6 @@ function pwdValidator(password: string) {
   return true;
 }
 
-function setCookie(cookie_name: string, value: string, days: number) {
-  const exDate = new Date();
-  exDate.setDate(exDate.getDate() + days);
-  var cookie_value =
-    escape(value) + (days == null ? "" : "; expires=" + exDate.toUTCString());
-  document.cookie = cookie_name + "=" + cookie_value;
-}
-
 const Login = () => {
   const [id, idEventHandler, setId] = useInput("", idValidator);
   const [password, passwordEventHandler, setPwd] = useInput("", idValidator);
@@ -45,7 +38,7 @@ const Login = () => {
       console.log("검증완료 id : ", id);
     } else {
       console.log("검증실패 id: ", id);
-      window.alert("id 양식이 맞지 않습니다.");
+      //window.alert("id 양식이 맞지 않습니다.");
       setId("");
       setPwd("");
     }
@@ -67,13 +60,13 @@ const Login = () => {
         })
         .catch((e) => {
           console.log(e);
-          window.alert("로그인에 실패했습니다.");
+          //window.alert("로그인에 실패했습니다.");
           idRef.current.focus();
         });
       //navigate("/");
     } else {
       console.log("검증실패 password : ", password);
-      window.alert("password 양식이 맞지 않습니다.");
+      //window.alert("password 양식이 맞지 않습니다.");
       setId("");
       setPwd("");
       idRef.current.focus();

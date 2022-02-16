@@ -3,6 +3,8 @@ import { useMutation, gql } from "@apollo/client";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { useSelector } from "react-redux";
+import { RootState } from "src/store/rootReducer";
 //validation해야하고, focus하는 거 하고 keypress hook만들어두자~
 const SplitView = styled.div`
   display: flex;
@@ -27,10 +29,11 @@ const Tag = styled.button`
 
 const Writing = () => {
   const [attachment, setAttachment] = useState("");
-  const [tags, setTags] = useState<any>(["태그1", "태그2"]);
-  const [title, setTitle] = useState<any>("테스트 타이틀");
-  const [markdown, setMarkdown] = useState("테스트 컨텐츠 내용");
+  const [tags, setTags] = useState<any>([]);
+  const [title, setTitle] = useState<any>("");
+  const [markdown, setMarkdown] = useState("");
   const tagRef = useRef<any>(null);
+  const token = useSelector((state: RootState) => state.authToken);
   const navigate = useNavigate();
   const SEND_FILE = gql`
     mutation upload($file: Upload!) {
@@ -54,6 +57,7 @@ const Writing = () => {
           tags: $tags
           content: $content
           thumbnail: $thumbnail
+          attachments: []
         }
       ) {
         postId
@@ -72,7 +76,7 @@ const Writing = () => {
     },
     context: {
       headers: {
-        authorization: `Bearer ${window.localStorage.getItem("authToken")}`,
+        authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     },
@@ -97,7 +101,7 @@ const Writing = () => {
 
     context: {
       headers: {
-        authorization: `Bearer ${window.localStorage.getItem("authToken")}`,
+        authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     },
@@ -108,20 +112,23 @@ const Writing = () => {
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
-          upload({
-            variables: {
-              file: attachment,
-            },
-          });
-          // posting({
-          //   variables: {
-          //     title: title,
-          //     tags: tags,
-          //     content: markdown,
-          //     file: attachment,
-          //   },
-          // });
-          //sendFile({ variables: { file: attachment } });
+          console.log("웨안됨?", attachment);
+          if (attachment) {
+            upload({
+              variables: {
+                file: attachment,
+              },
+            });
+          } else {
+            posting({
+              variables: {
+                title: title,
+                tags: tags,
+                content: markdown,
+                thumbnail: null,
+              },
+            });
+          }
         }}
       >
         <label htmlFor="title">제목</label>
