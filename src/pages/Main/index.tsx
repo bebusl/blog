@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { List } from "src/shared/List";
-import TopNav from "src/layouts/TopNav";
-import SideNav from "src/layouts/sidenav";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery, gql } from "@apollo/client";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import { login } from "src/store/action";
+import SideNav from "src/layouts/sidenav";
 const LMain = styled.div`
   width: 1080px;
   margin: 0 auto;
@@ -29,29 +27,30 @@ const GET_POST = gql`
 
 const Main = () => {
   //const [post, setPost] = useState([]);
-  const redux = useSelector((state) => state);
-  const dispatch = useDispatch(); //dispatch에 action넣어서 수송~
 
+  const navigate = useNavigate();
   const { data, error, loading } = useQuery(GET_POST, {
     variables: { tags: [], page: 0, size: 10 },
-    onCompleted: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
+    pollInterval: 1000 * 30,
   });
-  const src = "https://cold-cougar-89.loca.lt/file/serve/";
+  const src = "http://180.231.130.252:8000/file/serve/";
   return (
     <div>
-      <TopNav></TopNav>
       <SideNav></SideNav>
-
       <LMain>
         {!loading && !data && <div>포스트가 없습니다.</div>}
         {data &&
           data.getAllPost.map((post: any, idx: Number) => (
-            <List key={`list${idx}`}>
+            <List
+              style={{
+                cursor: "pointer",
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(`/read/${post.postId}`);
+              }}
+              key={`list${idx}`}
+            >
               <img alt="img" src={`${src}${post.thumbnail}`}></img>
               <div>{post.title}</div>
               <div>{post.createdDate}</div>
