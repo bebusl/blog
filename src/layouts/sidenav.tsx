@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-
+import { useQuery, gql } from "@apollo/client";
 const NavStyle = styled.nav<{ nav: boolean }>`
   position: fixed;
   top: 60px;
@@ -35,9 +35,27 @@ const ToggleButton = styled.div<{ nav: boolean }>`
   cursor: pointer;
 `;
 
+const GET_CATEGORIES = gql`
+  query category($category: [ID]) {
+    getCategoryInfo(ids: $category) {
+      category {
+        name
+        count
+      }
+      tags {
+        name
+        count
+      }
+    }
+  }
+`;
+
 const SideNav = () => {
   const [nav, setNav] = useState(false);
-
+  const { loading, data, error } = useQuery(GET_CATEGORIES, {
+    variables: { category: [] },
+    onCompleted: (data) => console.log("성공", data),
+  });
   return (
     <>
       <ToggleButton
@@ -54,21 +72,60 @@ const SideNav = () => {
         />
       </ToggleButton>
       <NavStyle nav={nav}>
-        <h4>Category</h4>
-        <ul>
-          <li>menu1</li>
-          <li>menu2</li>
-          <li>menu3</li>
-        </ul>
-        <h4>Category2</h4>
-        <ul>
-          <li>menu1</li>
-          <li>menu2</li>
-          <li>menu3</li>
-        </ul>
+        {data &&
+          data.getCategoryInfo.map((adata: any) => (
+            <>
+              <h4>
+                {adata.category.name}({adata.category.count})
+              </h4>
+              <ul>
+                {adata.tags.map(
+                  (tag: { name: string; count: number }, idx: number) => (
+                    <li key={`tag-${idx}`}>
+                      {tag.name}({tag.count})
+                    </li>
+                  )
+                )}
+              </ul>
+            </>
+          ))}
+        {/* {testData && (
+          <>
+            <h4>
+              {testData.category.name}({testData.category.count})
+            </h4>
+            <ul>
+              {testData.tags.map((tag, idx) => (
+                <li key={`tag-${idx}`}>
+                  {tag.name}({tag.count})
+                </li>
+              ))}
+            </ul>
+          </>
+        )} */}
       </NavStyle>
     </>
   );
 };
 
 export default SideNav;
+
+/**
+ * [
+    {
+        "__typename": "CategoryInfoType",
+        "category": {
+            "__typename": "PostCountType",
+            "name": "미등록 태그",
+            "count": 1
+        },
+        "tags": [
+            {
+                "__typename": "PostCountType",
+                "name": "tag",
+                "count": 1
+            }
+        ]
+    }
+]
+ */
