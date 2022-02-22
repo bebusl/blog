@@ -2,9 +2,9 @@ import axios, { AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 
 type AuthorizationType = AxiosRequestHeaders & {
   headers: {
-    authToken?: string;
-    refreshToken?: string;
-    authorization?: string;
+    authToken?: string | null;
+    refreshToken?: string | null;
+    authorization?: string | null;
   };
 };
 
@@ -17,17 +17,19 @@ function init() {
 
 export const client = init();
 
-export function setToken(token: String, auth?: boolean, refresh?: boolean) {
+export function setToken(
+  token: String | null,
+  auth?: boolean,
+  refresh?: boolean
+) {
   client.interceptors.request.use(
     (request: AxiosRequestConfig): AuthorizationType => {
       const copy_ = request as AuthorizationType;
       if (auth) {
-        copy_.headers.authorization = `Bearer ${token}`;
-        console.log("어쓰토큰 발행.");
+        copy_.headers.authorization = token === null ? null : `Bearer ${token}`;
       }
       if (refresh) {
-        copy_.headers.refreshToken = `Bearer ${token}`;
-        console.log("리프레시토큰 발행.");
+        copy_.headers.refreshToken = token === null ? null : `Bearer ${token}`;
       }
 
       return copy_;

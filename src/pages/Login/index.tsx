@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import setCookie from "src/utils/setCookie";
 import { login } from "src/store/action";
 import { useNavigate } from "react-router-dom";
-import { client as axios } from "@utils/fetch";
+import { setToken as axios } from "@utils/fetch";
 function idValidator(id: string) {
   if (id.includes("@")) {
     const [email, _] = id.split("@");
@@ -44,7 +44,7 @@ const Login = () => {
     }
     if (pwdValidator(password)) {
       console.log("검증완료 password : ", password);
-      axios
+      axios(null, true, true)
         .post(
           "/user/login",
           {
