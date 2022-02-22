@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { List } from "src/shared/List";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery, gql } from "@apollo/client";
 import SideNav from "src/layouts/sidenav";
+
 const LMain = styled.div`
   width: 1080px;
   margin: 0 auto;
 `;
 
 const GET_POST = gql`
-  query GET_POST($tags: [ID]!, $page: Int!, $size: Int!) {
-    getAllPost(tags: $tags, page: $page, size: $size) {
+  query GET_POST($category: ID, $tags: [ID]!, $page: Int!, $size: Int!) {
+    getAllPost(category: $category, tags: $tags, page: $page, size: $size) {
       postId
       title
       content
@@ -27,16 +28,30 @@ const GET_POST = gql`
 
 const Main = () => {
   //const [post, setPost] = useState([]);
-
+  const [id, setId] = useState<{
+    categoryId: number | null;
+    tags: number[] | null;
+  }>({ categoryId: null, tags: [] });
   const navigate = useNavigate();
-  const { data, error, loading } = useQuery(GET_POST, {
-    variables: { tags: [], page: 0, size: 10 },
+  const { data, error, loading, refetch } = useQuery(GET_POST, {
+    variables: { category: id.categoryId, tags: [], page: 0, size: 10 },
     pollInterval: 1000 * 30,
   });
   const src = "http://180.231.130.252:8000/file/serve/";
+
+  function handleTagClick(
+    e: ChangeEvent<HTMLInputElement>,
+    categoryId: number | null,
+    tags: never[]
+  ) {
+    e.preventDefault();
+    setId({ categoryId, tags });
+    refetch({ category: categoryId, tags: tags, page: 0, size: 10 });
+  }
+
   return (
     <div>
-      <SideNav></SideNav>
+      <SideNav handleTagClick={handleTagClick}></SideNav>
       <LMain>
         {!loading && !data && <div>포스트가 없습니다.</div>}
         {data &&

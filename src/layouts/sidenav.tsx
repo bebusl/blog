@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment, MouseEventHandler } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { useQuery, gql } from "@apollo/client";
 const NavStyle = styled.nav<{ nav: boolean }>`
   position: fixed;
@@ -41,20 +42,23 @@ const GET_CATEGORIES = gql`
       category {
         name
         count
+        id
       }
       tags {
         name
         count
+        id
       }
     }
   }
 `;
 
-const SideNav = () => {
+const SideNav: React.FC<{
+  handleTagClick: Function;
+}> = ({ handleTagClick }) => {
   const [nav, setNav] = useState(false);
   const { loading, data, error } = useQuery(GET_CATEGORIES, {
     variables: { category: [] },
-    onCompleted: (data) => console.log("성공", data),
   });
   return (
     <>
@@ -72,60 +76,41 @@ const SideNav = () => {
         />
       </ToggleButton>
       <NavStyle nav={nav}>
+        {loading && <p>still Loading</p>}
         {data &&
           data.getCategoryInfo.map((adata: any) => (
-            <>
+            <Fragment key={adata.category.name}>
               <h4>
-                {adata.category.name}({adata.category.count})
+                <Link
+                  to="/"
+                  onClick={(e) => handleTagClick(e, adata.category.id, [])}
+                >
+                  {adata.category.name}({adata.category.count})
+                </Link>
               </h4>
               <ul>
                 {adata.tags.map(
-                  (tag: { name: string; count: number }, idx: number) => (
-                    <li key={`tag-${idx}`}>
+                  (
+                    tag: { name: string; count: number; id: string },
+                    idx: number
+                  ) => (
+                    <li
+                      key={`tag${adata.category.name}-${idx}`}
+                      style={{ cursor: "pointer" }}
+                      onClick={(e) => {
+                        handleTagClick(e, null, [Number(tag.id)]);
+                      }}
+                    >
                       {tag.name}({tag.count})
                     </li>
                   )
                 )}
               </ul>
-            </>
+            </Fragment>
           ))}
-        {/* {testData && (
-          <>
-            <h4>
-              {testData.category.name}({testData.category.count})
-            </h4>
-            <ul>
-              {testData.tags.map((tag, idx) => (
-                <li key={`tag-${idx}`}>
-                  {tag.name}({tag.count})
-                </li>
-              ))}
-            </ul>
-          </>
-        )} */}
       </NavStyle>
     </>
   );
 };
 
 export default SideNav;
-
-/**
- * [
-    {
-        "__typename": "CategoryInfoType",
-        "category": {
-            "__typename": "PostCountType",
-            "name": "미등록 태그",
-            "count": 1
-        },
-        "tags": [
-            {
-                "__typename": "PostCountType",
-                "name": "tag",
-                "count": 1
-            }
-        ]
-    }
-]
- */
