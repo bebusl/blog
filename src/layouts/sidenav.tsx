@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, MouseEventHandler } from "react";
+import React, { useState, Fragment } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery, gql } from "@apollo/client";
@@ -36,18 +36,32 @@ const ToggleButton = styled.div<{ nav: boolean }>`
   cursor: pointer;
 `;
 
+const category_info = gql`
+  fragment categoryInfo on CategoryCountType {
+    name
+    count
+    id
+  }
+`;
+
+const tags_info = gql`
+  fragment tagsInfo on TagCountType {
+    name
+    count
+    id
+  }
+`;
+
 const GET_CATEGORIES = gql`
-  query category($category: [ID]) {
-    getCategoryInfo(ids: $category) {
+  ${category_info}
+  ${tags_info}
+  query category($category_: [ID]) {
+    getCategoryInfo(ids: $category_) {
       category {
-        name
-        count
-        id
+        ...categoryInfo
       }
       tags {
-        name
-        count
-        id
+        ...tagsInfo
       }
     }
   }
@@ -58,7 +72,10 @@ const SideNav: React.FC<{
 }> = ({ handleTagClick }) => {
   const [nav, setNav] = useState(false);
   const { loading, data, error } = useQuery(GET_CATEGORIES, {
-    variables: { category: [] },
+    variables: { category_: [] },
+    // fetchPolicy: "no-cache",
+    onCompleted: (data_) => console.log("웨이러니?", data_),
+    onError: (error_) => console.log("헤헤 에러남", error_),
   });
   return (
     <>
