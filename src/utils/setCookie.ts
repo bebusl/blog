@@ -9,3 +9,7 @@ export default function setCookie(
     escape(value) + (days == null ? "" : "; expires=" + exDate.toUTCString());
   document.cookie = cookie_name + "=" + cookie_value;
 }
+
+export function clearCookie(cookie_name: string) {
+  document.cookie = cookie_name + "=" + null;
+}

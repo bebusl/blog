@@ -37,3 +37,15 @@ export function setToken(
   );
   return client;
 }
+
+export function resetToken() {
+  client.interceptors.request.use(
+    (request: AxiosRequestConfig): AuthorizationType => {
+      const copy_ = request as AuthorizationType;
+      copy_.headers.authorization = null;
+      copy_.headers.refreshToken = null;
+      return copy_;
+    }
+  );
+  return client;
+}
