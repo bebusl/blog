@@ -10,7 +10,7 @@ type AuthorizationType = AxiosRequestHeaders & {
 
 function init() {
   return axios.create({
-    baseURL: "http://180.231.130.252:8000",
+    baseURL: "https://www.cbnu-psa.kro.kr/",
     withCredentials: true,
   });
 }
