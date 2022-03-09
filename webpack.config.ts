@@ -27,9 +27,7 @@ const config: Configuration = {
       //두번째 앞에 /src하지 말것.., 슬래쉬 꼭 빼주세욤..!
     },
   },
-  entry: {
-    app: "./index",
-  },
+  entry: "./index",
   target: ["web", "es5"],
   module: {
     rules: [
@@ -79,10 +77,11 @@ const config: Configuration = {
     }),
   ],
   output: {
-    path: path.join(__dirname, "dist"),
+    path: path.join(__dirname, "build"),
     filename: "[name].js",
-    publicPath: "/dist/",
+    publicPath: "/build/",
   },
+
   devServer: {
     historyApiFallback: true,
     port: 3090,
@@ -95,6 +94,11 @@ const config: Configuration = {
     //         ws: true,
     //     },
     // },
+  },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
   },
 };
 
