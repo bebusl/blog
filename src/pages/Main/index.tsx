@@ -37,7 +37,7 @@ const Main = () => {
     variables: { category: id.categoryId, tags: [], page: 0, size: 10 },
     pollInterval: 1000 * 30,
   });
-  const src = "https://www.cbnu-psa.kro.kr/file/serve/";
+  const src = "http://localhost:8000/file/serve/";
 
   function handleTagClick(
     e: ChangeEvent<HTMLInputElement>,
