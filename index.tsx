@@ -10,7 +10,7 @@ import { createUploadLink } from "apollo-upload-client";
 import store from "src/store/store";
 
 const httpLink = createUploadLink({
-  uri: "https://www.cbnu-psa.kro.kr/graphql",
+  uri: "http://localhost:8000/graphql",
   credentials: "same-origin",
 });
 
