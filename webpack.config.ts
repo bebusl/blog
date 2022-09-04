@@ -27,7 +27,7 @@ const config: Configuration = {
       //두번째 앞에 /src하지 말것.., 슬래쉬 꼭 빼주세욤..!
     },
   },
-  entry: "./index",
+  entry: path.resolve(__dirname, "index.tsx"),
   target: ["web", "es5"],
   module: {
     rules: [
@@ -77,16 +77,22 @@ const config: Configuration = {
     }),
   ],
   output: {
-    path: path.join(__dirname, "build"),
+    path: path.join(__dirname, "dist"),
     filename: "[name].js",
-    publicPath: "/build/",
+    publicPath: "/dist/",
   },
 
   devServer: {
     historyApiFallback: true,
-    port: 3090,
-    devMiddleware: { publicPath: "/dist/" },
-    static: { directory: path.resolve(__dirname) },
+    open: true,
+    port: 4000,
+    static: {
+      directory: path.join(__dirname, "/"),
+    },
+    // historyApiFallback: true,
+    // port: 3090,
+    // devMiddleware: { publicPath: "/dist/" },
+    // static: { directory: path.resolve(__dirname) },
     // proxy: {
     //     "/api/": {
     //         target: "http://localhost:3095",
