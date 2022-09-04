@@ -19,6 +19,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+if (process.env.NODE_ENV === "development") {
+  console.log("HIHI OPEN");
+  const { worker } = require("mocks/browser");
+  worker.start();
+}
+
 render(
   <ApolloProvider client={client}>
     <Provider store={store}>
