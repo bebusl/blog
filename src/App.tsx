@@ -11,6 +11,7 @@ import Test from "@pages/Test";
 import Read from "@pages/Read";
 import Admin from "@pages/Admin";
 import { login, logoff } from "./store/action";
+import DefaultContainer from "./layouts/DefaultContainer";
 //const LogIn = loadable(() => import('@pages/LogIn'));
 //여기서 5초마다 실행되게 하면 되자너?!
 export default function App() {
@@ -48,14 +49,16 @@ export default function App() {
   return (
     <div>
       <TopNav></TopNav>
-      <Routes>
-        <Route path="/" element={<Main />}></Route>
-        <Route path="login" element={<Login />}></Route>
-        <Route path="writing" element={<Writing />}></Route>
-        <Route path="test" element={<Test value="jinhee" />}></Route>
-        <Route path="read/:id" element={<Read />}></Route>
-        <Route path="admin" element={<Admin />}></Route>
-      </Routes>
+      <DefaultContainer>
+        <Routes>
+          <Route path="/" element={<Main />}></Route>
+          <Route path="login" element={<Login />}></Route>
+          <Route path="writing" element={<Writing />}></Route>
+          <Route path="test" element={<Test value="jinhee" />}></Route>
+          <Route path="read/:id" element={<Read />}></Route>
+          <Route path="admin" element={<Admin />}></Route>
+        </Routes>
+      </DefaultContainer>
     </div>
   );
 }

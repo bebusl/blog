@@ -6,6 +6,7 @@ import { RootState } from "src/store/rootReducer";
 import { useDispatch } from "react-redux";
 import { logoff } from "src/store/action";
 import { setToken } from "@utils/fetch";
+import DefaultContainer from "./DefaultContainer";
 
 const TopNavStyle = styled.ul`
   list-style-type: none;
@@ -47,48 +48,33 @@ const TopNav = () => {
   const dispatch = useDispatch();
   return (
     <TopNavStyle>
-      <Container>
+      <DefaultContainer flexDirection="row" justifyContent="space-between">
+        <div>
+          <Link to="/">BlogHome</Link>
+        </div>
         {isLogin && (
-          <>
-            <li>
-              <Link to="/">BlogHome</Link>
-            </li>
-            <li>
-              <Link to="/writing">글쓰기</Link>
-            </li>
-            <li>
-              <Link to="/admin">관리자페이지</Link>
-            </li>
-            <li>
-              <Link
-                to=""
-                onClick={(e) => {
-                  e.preventDefault();
-                  dispatch(logoff());
-                  setToken(auth_token, true, undefined)
-                    .get("/user/logout")
-                    .then((res) => console.log("로그아웃 결과", res))
-                    .catch((e) => console.log("로그아웃에러", e));
-                }}
-              >
-                로그아웃
-              </Link>
-            </li>
-          </>
+          <div>
+            <Link to="/writing">글쓰기</Link>
+
+            <Link to="/admin">관리자페이지</Link>
+
+            <Link
+              to=""
+              onClick={(e) => {
+                e.preventDefault();
+                dispatch(logoff());
+                setToken(auth_token, true, undefined)
+                  .get("/user/logout")
+                  .then((res) => console.log("로그아웃 결과", res))
+                  .catch((e) => console.log("로그아웃에러", e));
+              }}
+            >
+              로그아웃
+            </Link>
+          </div>
         )}
-        {!isLogin && (
-          <>
-            <>
-              <li>
-                <Link to="/">BlogHome</Link>
-              </li>
-              <li>
-                <Link to="/login">로그인</Link>
-              </li>
-            </>
-          </>
-        )}
-      </Container>
+        {!isLogin && <Link to="/login">로그인</Link>}
+      </DefaultContainer>
     </TopNavStyle>
   );
 };
