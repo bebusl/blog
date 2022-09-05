@@ -3,7 +3,7 @@ import { List } from "src/shared/List";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery, gql } from "@apollo/client";
-import SideNav from "src/layouts/sidenav";
+import SideNav from "src/layouts/SideNav";
 
 const LMain = styled.div`
   width: 1080px;
