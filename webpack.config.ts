@@ -50,11 +50,15 @@ const config: Configuration = {
             development: {
               plugins: [
                 ["@emotion/babel-plugin", { sourceMap: true }],
+                ["@babel/plugin-transform-runtime", { regenerator: true }],
                 require.resolve("react-refresh/babel"),
               ],
             },
             production: {
-              plugins: ["@emotion/babel-plugin"],
+              plugins: [
+                "@emotion/babel-plugin",
+                ["@babel/plugin-transform-runtime", { regenerator: true }],
+              ],
             },
           },
         },
