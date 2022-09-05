@@ -47,14 +47,15 @@
     "react-router-dom": "^6.2.1",
     "redux": "^4.1.2",
     "styled-components": "^5.3.3",
-    "styled-normalize": "^8.0.7",
-    "typescript": "^4.5.4"
+    "styled-normalize": "^8.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",
+    "@babel/plugin-transform-runtime": "^7.18.10",
     "@babel/preset-env": "^7.16.5",
     "@babel/preset-react": "^7.16.5",
     "@babel/preset-typescript": "^7.16.5",
+    "@babel/runtime": "^7.18.9",
     "@loadable/component": "^5.15.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
     "@types/fork-ts-checker-webpack-plugin": "^0.4.5",
@@ -74,7 +75,6 @@
     "fork-ts-checker-webpack-plugin": "^6.5.0",
     "msw": "^0.47.0",
     "react-refresh": "^0.11.0",
-    "redux-devtools-extension": "^2.13.9",
     "style-loader": "^3.3.1",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.12.0",
