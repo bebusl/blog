@@ -4,14 +4,9 @@ import { client as axios } from "@utils/fetch";
 import { useDispatch } from "react-redux";
 import setCookie from "./utils/setCookie";
 import TopNav from "./layouts/TopNav";
-import Login from "@pages/Login";
-import Main from "@pages/Main";
-import Writing from "@pages/Writing";
-import Test from "@pages/Test";
-import Read from "@pages/Read";
-import Admin from "@pages/Admin";
 import { login, logoff } from "./store/action";
 import DefaultContainer from "./layouts/DefaultContainer";
+import DefaultRoutes from "./routes/defaultRoutes";
 //const LogIn = loadable(() => import('@pages/LogIn'));
 //여기서 5초마다 실행되게 하면 되자너?!
 export default function App() {
@@ -26,7 +21,6 @@ export default function App() {
           })
           .then((res) => {
             if (res.data.refresh_token === null) {
-              //window.alert("토큰이 만료되어 로그아웃되었습니다.");
               setCookie("refreshToken", "", 0);
               dispatch(logoff());
             } else {
@@ -46,18 +40,12 @@ export default function App() {
     interval;
     return clearInterval(interval);
   }, []); //이렇게보다 요청할때마다하는게 나을수도,,?
+
   return (
     <div>
-      <TopNav></TopNav>
+      <TopNav />
       <DefaultContainer>
-        <Routes>
-          <Route path="/" element={<Main />}></Route>
-          <Route path="login" element={<Login />}></Route>
-          <Route path="writing" element={<Writing />}></Route>
-          <Route path="test" element={<Test value="jinhee" />}></Route>
-          <Route path="read/:id" element={<Read />}></Route>
-          <Route path="admin" element={<Admin />}></Route>
-        </Routes>
+        <DefaultRoutes />
       </DefaultContainer>
     </div>
   );

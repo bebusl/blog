@@ -62,7 +62,7 @@ const Main = () => {
               }}
               onClick={(e) => {
                 e.preventDefault();
-                navigate(`/read/${post.postId}`);
+                navigate(`/post/${post.postId}`);
               }}
               key={`list${idx}`}
             >
