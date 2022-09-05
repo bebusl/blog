@@ -13,8 +13,36 @@ export const login = createAsyncThunk(
           withCredentials: true,
         }
       );
-      console.log(response);
       return response.data;
+    } catch (error) {
+      const errorWrap = error as AxiosError;
+      return thunkAPI.rejectWithValue(errorWrap.response?.status);
+    }
+  }
+);
+
+export const getRefreshToken = createAsyncThunk(
+  "auth/refresh",
+  async (refresh_token: string, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        "https://jh-blog-api.yoonleeverse.com/user/refresh",
+        { refresh_token }
+      );
+      if (!response.data.refresh_token) {
+        setCookie("refreshToken", "", 0);
+        thunkAPI.dispatch(logoff());
+        return { isSuccess: true };
+      } else {
+        setCookie("refreshToken", response.data.refresh_token, 7);
+        thunkAPI.dispatch(
+          updateLoginStatus({
+            email: response.data.email,
+            auth_token: response.data.auth_token,
+          })
+        );
+        return { isSuccess: true };
+      }
     } catch (error) {
       const errorWrap = error as AxiosError;
       return thunkAPI.rejectWithValue(errorWrap.response?.status);
@@ -36,6 +64,12 @@ export const authSlice = createSlice({
     logoff: (state) => {
       state = initialState;
     },
+    updateLoginStatus: (state, action) => {
+      console.log(action);
+      state.isLogin = true;
+      state.email = action.payload.email;
+      state.authToken = action.payload.auth_token;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
@@ -45,14 +79,25 @@ export const authSlice = createSlice({
       state.email = action.payload.user.email;
       state.authToken = action.payload.auth_token;
     });
-    builder.addCase(login.rejected, (state, action) => {
+    builder.addCase(login.rejected, (state) => {
       state = initialState;
     });
-    builder.addCase(login.pending, (state, action) => {
+    builder.addCase(login.pending, (state) => {
       state.isLoading = true;
+    });
+    builder.addCase(getRefreshToken.fulfilled, (state, action) => {
+      state.isLoading = false;
+      console.log("done", action);
+    });
+    builder.addCase(getRefreshToken.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getRefreshToken.rejected, (state) => {
+      state.isLoading = false;
+      state = initialState;
     });
   },
 });
 
-export const { logoff } = authSlice.actions;
+export const { logoff, updateLoginStatus } = authSlice.actions;
 export default authSlice.reducer;
