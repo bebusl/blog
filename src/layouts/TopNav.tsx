@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { RootState } from "src/store/rootReducer";
-import { useDispatch } from "react-redux";
-import { logoff } from "src/store/action";
+
 import { setToken } from "@utils/fetch";
 import DefaultContainer from "./DefaultContainer";
+import { useAppSelector, useAppDispatch } from "src/store/hooks";
+import { logoff } from "src/store/authReducer";
 
 const TopNavStyle = styled.ul`
   list-style-type: none;
@@ -43,9 +42,8 @@ const Container = styled.div`
 `;
 
 const TopNav = () => {
-  const isLogin = useSelector((state: RootState) => state.isLogin);
-  const auth_token = useSelector((state: RootState) => state.authToken);
-  const dispatch = useDispatch();
+  const { isLogin, authToken } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   return (
     <TopNavStyle>
       <DefaultContainer flexDirection="row" justifyContent="space-between">
@@ -55,15 +53,13 @@ const TopNav = () => {
         {isLogin && (
           <div>
             <Link to="/writing">글쓰기</Link>
-
             <Link to="/admin">관리자페이지</Link>
-
             <Link
               to=""
               onClick={(e) => {
                 e.preventDefault();
                 dispatch(logoff());
-                setToken(auth_token, true, undefined)
+                setToken(authToken, true, undefined)
                   .get("/user/logout")
                   .then((res) => console.log("로그아웃 결과", res))
                   .catch((e) => console.log("로그아웃에러", e));
