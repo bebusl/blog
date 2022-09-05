@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import setCookie from "src/utils/setCookie";
-import { ids } from "webpack";
 
 export const login = createAsyncThunk(
   "auth/login",
