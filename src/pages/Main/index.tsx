@@ -37,7 +37,7 @@ const Main = () => {
     variables: { category: id.categoryId, tags: [], page: 0, size: 10 },
     pollInterval: 1000 * 30,
   });
-  const src = "http://localhost:8000/file/serve/";
+  const src = "https://jh-blog-api.yoonleeverse.com/file/serve/";
 
   function handleTagClick(
     e: ChangeEvent<HTMLInputElement>,
@@ -55,7 +55,7 @@ const Main = () => {
       <LMain>
         {!loading && !data && <div>포스트가 없습니다.</div>}
         {data &&
-          data.getAllPost.map((post: any, idx: Number) => (
+          data.getAllPost?.map((post: any, idx: Number) => (
             <List
               style={{
                 cursor: "pointer",

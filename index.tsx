@@ -19,11 +19,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// if (process.env.NODE_ENV === "development") {
-//   console.log("SERVICE START");
-//   worker.start();
-// }
-
 render(
   <ApolloProvider client={client}>
     <Provider store={store}>

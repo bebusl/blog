@@ -48,7 +48,6 @@ export default function App() {
   return (
     <div>
       <TopNav></TopNav>
-
       <Routes>
         <Route path="/" element={<Main />}></Route>
         <Route path="login" element={<Login />}></Route>
