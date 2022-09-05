@@ -10,7 +10,7 @@ type AuthorizationType = AxiosRequestHeaders & {
 
 function init() {
   return axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: "https://jh-blog-api.yoonleeverse.com",
     withCredentials: true,
   });
 }
