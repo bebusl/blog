@@ -33,7 +33,11 @@ const initialState = {
 export const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    logoff: (state) => {
+      state = initialState;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
       setCookie("refreshToken", action.payload.refresh_token, 7);
@@ -43,10 +47,7 @@ export const authSlice = createSlice({
       state.authToken = action.payload.auth_token;
     });
     builder.addCase(login.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isLogin = false;
-      state.authToken = "";
-      state.email = "";
+      state = initialState;
     });
     builder.addCase(login.pending, (state, action) => {
       state.isLoading = true;
@@ -54,5 +55,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const {} = authSlice.actions;
+export const { logoff } = authSlice.actions;
 export default authSlice.reducer;
