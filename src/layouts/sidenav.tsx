@@ -4,14 +4,10 @@ import { Link } from "react-router-dom";
 import { useQuery, gql } from "@apollo/client";
 import IconButton from "src/components/IconButton";
 
-const SideNav: React.FC<{
-  handleTagClick: Function;
-}> = ({ handleTagClick }) => {
+const SideNav = () => {
   const [nav, setNav] = useState(false);
-  const { loading, data, error } = useQuery(GET_CATEGORIES, {
+  const { loading, data } = useQuery(GET_CATEGORIES, {
     variables: { category_: [] },
-    onCompleted: (data_) => console.log("웨이러니?", data_),
-    onError: (error_) => console.log("헤헤 에러남", error_),
   });
   return (
     <>
@@ -26,10 +22,7 @@ const SideNav: React.FC<{
           data.getCategoryInfo.map((adata: any) => (
             <Fragment key={adata.category.name}>
               <h5>
-                <Link
-                  to="/"
-                  onClick={(e) => handleTagClick(e, adata.category.id, [])}
-                >
+                <Link to={`/?category=${adata.category.id}`}>
                   {adata.category.name}({adata.category.count})
                 </Link>
               </h5>
@@ -40,15 +33,9 @@ const SideNav: React.FC<{
                     tag: { name: string; count: number; id: string },
                     idx: number
                   ) => (
-                    <li
-                      key={`tag${adata.category.name}-${idx}`}
-                      style={{ cursor: "pointer" }}
-                      onClick={(e) => {
-                        handleTagClick(e, null, [Number(tag.id)]);
-                      }}
-                    >
+                    <Link to={`/?tags=${tag.id}`}>
                       {tag.name}({tag.count})
-                    </li>
+                    </Link>
                   )
                 )}
               </ul>
@@ -67,6 +54,7 @@ const NavStyle = styled.nav<{ nav: boolean }>`
   left: 0;
   z-index: 9999;
   background-color: black;
+  border: none;
   width: 250px;
   min-height: 100vh;
   display: inline-block;
