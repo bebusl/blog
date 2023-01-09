@@ -4,6 +4,7 @@ import webpack, { Configuration as WebpackConfiguration } from "webpack";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
@@ -82,7 +83,7 @@ const config: Configuration = {
   ],
   output: {
     path: path.join(__dirname, "dist"),
-    filename: "[name].js",
+    filename: "index.js",
     publicPath: "/dist/",
   },
 
@@ -128,6 +129,7 @@ if (isDevelopment && config.plugins) {
 if (!isDevelopment && config.plugins) {
   config.plugins.push(new webpack.LoaderOptionsPlugin({ minimize: true }));
   config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: "static" }));
+  config.plugins.push(new HtmlWebpackPlugin());
 }
 
 export default config;
