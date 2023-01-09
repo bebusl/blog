@@ -3,9 +3,8 @@ import { useMutation, gql } from "@apollo/client";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
-import { useSelector } from "react-redux";
-import { RootState } from "src/store/rootReducer";
-//validation해야하고, focus하는 거 하고 keypress hook만들어두자~
+import { useAppSelector } from "src/store/hooks";
+
 const SplitView = styled.div`
   display: flex;
   justify-content: center;
@@ -33,7 +32,7 @@ const Writing = () => {
   const [title, setTitle] = useState<any>("");
   const [markdown, setMarkdown] = useState("");
   const tagRef = useRef<any>(null);
-  const token = useSelector((state: RootState) => state.authToken);
+  const token = useAppSelector((state) => state.auth.authToken);
   const navigate = useNavigate();
   const SEND_FILE = gql`
     mutation upload($file: Upload!) {

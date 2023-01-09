@@ -2,8 +2,9 @@ import React, { useState, MouseEvent } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Modal from "src/shared/Modal";
-import { RootState } from "src/store/rootReducer";
+// import { RootState } from "src/store/rootReducer";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { useAppSelector } from "src/store/hooks";
 const Contents = styled.div`
   width: 720px;
   height: 100vh;
@@ -67,7 +68,7 @@ const Admin = () => {
       setCategories(tmp);
     },
   });
-  const auth_token = useSelector((state: RootState) => state.authToken);
+  const auth_token = useAppSelector((state) => state.auth.authToken);
 
   const [create] = useMutation(CREATE_CATEGORIES, {
     context: {
