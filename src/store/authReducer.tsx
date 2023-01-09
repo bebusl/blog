@@ -30,14 +30,10 @@ export const getRefreshToken = createAsyncThunk(
         { refresh_token }
       );
       if (!response.data.refresh_token) {
-        console.log("SETCOOKIE 1");
         setCookie("refreshToken", "", 0);
         thunkAPI.dispatch(logoff());
         return { isSuccess: true };
       } else {
-        console.log(response.data.refresh_token);
-        console.log("SETCOOKIE 2", response.data.refresh_token);
-
         setCookie("refreshToken", response.data.refresh_token, 7);
         thunkAPI.dispatch(
           updateLoginStatus({
