@@ -2,7 +2,6 @@ import React, { useState, MouseEvent } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Modal from "src/shared/Modal";
-// import { RootState } from "src/store/rootReducer";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { useAppSelector } from "src/store/hooks";
 const Contents = styled.div`
@@ -84,10 +83,8 @@ const Admin = () => {
     },
   });
 
-  //const isLogin = useSelector((state: RootState) => state.isLogin);
   interface ICategory {
     [key: string]: string[];
-    //[key: string]: Object[];
   }
 
   const DragTag: React.FC<{ tag: string }> = ({ children, tag }) => {
@@ -139,7 +136,6 @@ const Admin = () => {
 
   const addCategory = (newName: string, tags: string[]) => {
     setCategories({ ...categories, [newName]: tags });
-    //console.log(tags, tagId);
     const getId = tags.map((tag) => tagId[`${tag}`]);
     create({ variables: { name: newName, tags: getId } });
   };

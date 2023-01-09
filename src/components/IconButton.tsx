@@ -3,7 +3,15 @@ import styled, { keyframes } from "styled-components";
 
 function IconButton({ onClick }: { onClick: () => void }) {
   return (
-    <div style={{ position: "fixed", left: "0", top: "0", zIndex: "10000" }}>
+    <div
+      style={{
+        position: "fixed",
+        left: "0",
+        top: "0",
+        padding: "5px",
+        zIndex: "10000",
+      }}
+    >
       <CheckBox
         name="menu"
         type="checkbox"
@@ -92,4 +100,4 @@ const Label = styled.label`
   }
 `;
 
-export default IconButton;
+export default React.memo(IconButton);

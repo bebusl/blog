@@ -28,10 +28,10 @@ const Tag = styled.button`
 
 const Writing = () => {
   const [attachment, setAttachment] = useState("");
-  const [tags, setTags] = useState<any>([]);
-  const [title, setTitle] = useState<any>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [title, setTitle] = useState<string>("");
   const [markdown, setMarkdown] = useState("");
-  const tagRef = useRef<any>(null);
+  const tagRef = useRef<HTMLSpanElement>(null);
   const token = useAppSelector((state) => state.auth.authToken);
   const navigate = useNavigate();
   const SEND_FILE = gql`
@@ -47,7 +47,7 @@ const Writing = () => {
     mutation createPost(
       $title: String!
       $tags: [String]!
-      $content: String
+      $content: String!
       $thumbnail: ID
     ) {
       createPost(
@@ -87,7 +87,6 @@ const Writing = () => {
       const {
         upload: { fileId },
       } = data;
-      //const { fileId } = data;
       posting({
         variables: {
           title: title,
@@ -96,6 +95,9 @@ const Writing = () => {
           thumbnail: fileId,
         },
       });
+    },
+    onError: (error) => {
+      console.log("ERROR", error);
     },
 
     context: {
@@ -139,7 +141,7 @@ const Writing = () => {
             e.preventDefault();
             setTitle(e.currentTarget.value);
           }}
-        ></input>
+        />
 
         <div>
           <span>태그</span>
@@ -153,10 +155,12 @@ const Writing = () => {
             contentEditable
             ref={tagRef}
             onKeyPress={(e) => {
-              const text = tagRef.current.innerText.trim();
-              if (e.key === "Enter" && text.length > 0) {
+              const text = tagRef.current?.innerText.trim();
+              if (e.key === "Enter" && text && text.length > 0) {
                 setTags([...tags, text]);
-                tagRef.current.innerText = "";
+                if (tagRef.current) {
+                  tagRef.current.innerText = "";
+                }
               }
             }}
           ></span>
@@ -182,8 +186,10 @@ const Writing = () => {
           type="file"
           onChange={(e: any) => {
             setAttachment(e.target.files[0]);
+            const file = e.target.files[0];
+            console.log("FILE,", file, typeof file);
           }}
-        ></input>
+        />
         <button type="submit">글 작성</button>
       </form>
     </>

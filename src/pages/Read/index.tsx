@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useAppSelector } from "src/store/hooks";
 
 const Title = styled.div`
   font-size: 2.5rem;
@@ -32,12 +33,31 @@ const GET_POST = gql`
   }
 `;
 
+const DELETE_POST = gql`
+  mutation delete_post($postId: ID) {
+    deletePost(postId: $postId) {
+      success
+    }
+  }
+`;
+
 const Read = () => {
   const { id } = useParams();
 
   const { data, loading, error } = useQuery(GET_POST, {
     variables: { postId: id },
   });
+
+  const auth_token = useAppSelector((state) => state.auth.authToken);
+
+  const [delete_post, { loading: deleteLoading, data: deleteData }] =
+    useMutation(DELETE_POST, {
+      context: {
+        headers: {
+          authorization: `Bearer ${auth_token}`, //토큰 넣어주기!
+        },
+      },
+    });
 
   return (
     <>
@@ -53,6 +73,20 @@ const Read = () => {
           <Content>{data.getPost.content}</Content>
         </div>
       )}
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          delete_post({
+            variables: { postId: id },
+            onCompleted: (data) => console.log(data),
+            onError: (err) => console.log(err),
+          });
+        }}
+      >
+        삭제하기
+      </button>
+
+      <button onClick={(e) => {}}>수정하기</button>
       {loading && <p>로딩중입니다.</p>}
       {error && <p>페이지 로딩에 실패했습니다.</p>}
     </>

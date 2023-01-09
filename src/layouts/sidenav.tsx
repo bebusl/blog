@@ -29,11 +29,8 @@ const SideNav = () => {
 
               <ul>
                 {adata.tags.map(
-                  (
-                    tag: { name: string; count: number; id: string },
-                    idx: number
-                  ) => (
-                    <Link to={`/?tags=${tag.id}`}>
+                  (tag: { name: string; count: number; id: string }) => (
+                    <Link to={`/?tags=${tag.id}`} key={tag.id}>
                       {tag.name}({tag.count})
                     </Link>
                   )

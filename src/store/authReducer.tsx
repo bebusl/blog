@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
-import setCookie from "src/utils/setCookie";
+import setCookie, { clearCookie } from "src/utils/setCookie";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -30,10 +30,14 @@ export const getRefreshToken = createAsyncThunk(
         { refresh_token }
       );
       if (!response.data.refresh_token) {
+        console.log("SETCOOKIE 1");
         setCookie("refreshToken", "", 0);
         thunkAPI.dispatch(logoff());
         return { isSuccess: true };
       } else {
+        console.log(response.data.refresh_token);
+        console.log("SETCOOKIE 2", response.data.refresh_token);
+
         setCookie("refreshToken", response.data.refresh_token, 7);
         thunkAPI.dispatch(
           updateLoginStatus({
@@ -62,6 +66,7 @@ export const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     logoff: (state) => {
+      clearCookie("refreshToken");
       state = initialState;
     },
     updateLoginStatus: (state, action) => {
@@ -73,6 +78,7 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
+      console.log("SETCOOKIE3", action.payload.refresh_token);
       setCookie("refreshToken", action.payload.refresh_token, 7);
       state.isLoading = false;
       state.isLogin = true;

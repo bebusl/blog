@@ -11,7 +11,7 @@ import store from "src/store/store";
 
 const httpLink = createUploadLink({
   uri: "https://jh-blog-api.yoonleeverse.com/graphql",
-  credentials: "same-origin",
+  credentials: "include",
 });
 
 const client = new ApolloClient({

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const List = styled.div`
-  width: 720px;
+  width: 100%;
   height: 150px;
   margin: 1rem auto;
   background-color: white;
