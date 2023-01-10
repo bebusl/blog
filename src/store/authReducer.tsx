@@ -74,7 +74,6 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
-      console.log("SETCOOKIE3", action.payload.refresh_token);
       setCookie("refreshToken", action.payload.refresh_token, 7);
       state.isLoading = false;
       state.isLogin = true;

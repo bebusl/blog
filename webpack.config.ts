@@ -129,7 +129,7 @@ if (isDevelopment && config.plugins) {
 if (!isDevelopment && config.plugins) {
   config.plugins.push(new webpack.LoaderOptionsPlugin({ minimize: true }));
   config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: "static" }));
-  config.plugins.push(new HtmlWebpackPlugin());
+  config.plugins.push(new HtmlWebpackPlugin({ template: "./index.html" }));
 }
 
 export default config;
