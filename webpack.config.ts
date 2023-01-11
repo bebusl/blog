@@ -123,12 +123,14 @@ if (isDevelopment && config.plugins) {
     })
   );
   config.plugins.push(
-    new BundleAnalyzerPlugin({ analyzerMode: "server", openAnalyzer: false })
+    new BundleAnalyzerPlugin({ analyzerMode: "server", openAnalyzer: true })
   );
 }
 if (!isDevelopment && config.plugins) {
   config.plugins.push(new webpack.LoaderOptionsPlugin({ minimize: true }));
-  config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: "static" }));
+  config.plugins.push(
+    new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false })
+  );
   config.plugins.push(new HtmlWebpackPlugin({ template: "./index.html" }));
 }
 
