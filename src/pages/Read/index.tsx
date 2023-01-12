@@ -43,7 +43,6 @@ const DELETE_POST = gql`
 
 const Read = () => {
   const { id } = useParams();
-
   const { data, loading, error } = useQuery(GET_POST, {
     variables: { postId: id },
   });
@@ -61,7 +60,6 @@ const Read = () => {
 
   return (
     <>
-      {/* {data && console.log("DATA", data)} */}
       {data && (
         <div>
           <Title>{data.getPost.title}</Title>
@@ -85,7 +83,6 @@ const Read = () => {
       >
         삭제하기
       </button>
-
       <button onClick={(e) => {}}>수정하기</button>
       {loading && <p>로딩중입니다.</p>}
       {error && <p>페이지 로딩에 실패했습니다.</p>}

@@ -1,17 +1,9 @@
-import React, { MouseEvent } from "react";
-import styled, { keyframes } from "styled-components";
+import React from "react";
+import styled from "styled-components";
 
 function IconButton({ onClick }: { onClick: () => void }) {
   return (
-    <div
-      style={{
-        position: "fixed",
-        left: "0",
-        top: "0",
-        padding: "5px",
-        zIndex: "10000",
-      }}
-    >
+    <Wrapper>
       <CheckBox
         name="menu"
         type="checkbox"
@@ -32,9 +24,13 @@ function IconButton({ onClick }: { onClick: () => void }) {
           />
         </svg>
       </Label>
-    </div>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  padding: 5px;
+`;
 const CheckBox = styled.input.attrs({ type: "checkbox" })`
   display: none;
   cursor: pointer;
@@ -66,6 +62,7 @@ const Label = styled.label`
   .line {
     fill: none;
     stroke: white;
+    mix-blend-mode: difference;
     stroke-width: 6;
     transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
       stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);

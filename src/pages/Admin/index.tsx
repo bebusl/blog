@@ -91,11 +91,7 @@ const Admin = () => {
     return (
       <TagS
         draggable="true"
-        onDrag={(e) => {
-          console.log("onDrag", e);
-        }}
         onDragStart={(e) => {
-          console.log("TAG", tag);
           e.dataTransfer.setData("tagname", tag);
         }}
       >
@@ -164,7 +160,7 @@ const Admin = () => {
           exitModal={exitModal}
           addCategory={addCategory}
           tags={HH}
-        ></Modal>
+        />
         {Object.keys(categories).map((category: string, idx_cat) => {
           return (
             <>

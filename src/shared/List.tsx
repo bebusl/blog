@@ -9,11 +9,10 @@ export const List = styled.div`
   display: grid;
   border-top: 1px solid #ededed;
   border-bottom: 1px solid #ededed;
-  grid-template-columns: 250px auto;
+  grid-template-columns: 1fr 3fr;
   grid-template-rows: repeat(8, 1fr);
   & img {
     grid-row: 1/9;
-    height: 100%;
     margin: 0 auto;
     justify-self: center;
     align-self: center;

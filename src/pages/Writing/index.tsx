@@ -10,6 +10,7 @@ const SplitView = styled.div`
   justify-content: center;
   align-items: center;
   height: 60vh;
+  width: 80vw;
   & div,
   & textarea {
     height: 100%;
@@ -24,6 +25,9 @@ const Tag = styled.button`
   border-radius: 10px;
   border: 1px solid #d3cdcd;
   box-shadow: gray 1px 1px 5px;
+  :after {
+    content: "X";
+  }
 `;
 
 const Writing = () => {
@@ -113,7 +117,6 @@ const Writing = () => {
       <form
         onSubmit={(e: any) => {
           e.preventDefault();
-          console.log("웨안됨?", attachment);
           if (attachment) {
             upload({
               variables: {
@@ -150,23 +153,38 @@ const Writing = () => {
               display: "inline-block",
               width: "150px",
               height: "2rem",
-              backgroundColor: "rgba(0,0,0,0.1)",
+              backgroundColor: "rgba(0,0,0,0.05)",
             }}
             contentEditable
             ref={tagRef}
             onKeyPress={(e) => {
               const text = tagRef.current?.innerText.trim();
               if (e.key === "Enter" && text && text.length > 0) {
+                e.preventDefault();
+                // contentEditable에서 enter를 입력하면 기본적으로 <br /> 엘레먼트가 추가된다.
+                // 우리는 Enter를 태그 추가의 의미로 사용할 것이므로 삭제!
                 setTags([...tags, text]);
-                if (tagRef.current) {
-                  tagRef.current.innerText = "";
-                }
+                if (tagRef.current) tagRef.current.innerText = "";
               }
             }}
-          ></span>
+          />
           <div>
             {tags.map((tag: any, idx: Number) => {
-              return <Tag key={idx as React.Key}>{tag}</Tag>;
+              return (
+                <Tag
+                  key={idx as React.Key}
+                  onClick={(e) => {
+                    setTags((prev) => {
+                      const idx = prev.indexOf(tag);
+                      prev.splice(idx, 1);
+                      const cur = [...prev];
+                      return cur;
+                    });
+                  }}
+                >
+                  {tag}
+                </Tag>
+              );
             })}
           </div>
         </div>
@@ -176,18 +194,18 @@ const Writing = () => {
               e.preventDefault();
               setMarkdown(e.target.value);
             }}
-          ></textarea>
+            style={{ resize: "none" }}
+          />
           <div>
             <ReactMarkdown>{markdown}</ReactMarkdown>
           </div>
         </SplitView>
-
+        <label htmlFor="thumbnail">썸네일 이미지 선택</label>
         <input
           type="file"
+          id="thumbnail"
           onChange={(e: any) => {
             setAttachment(e.target.files[0]);
-            const file = e.target.files[0];
-            console.log("FILE,", file, typeof file);
           }}
         />
         <button type="submit">글 작성</button>

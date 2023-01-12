@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import TopNav from "./layouts/TopNav";
+import SideNav from "./layouts/sidenav";
 import { useAppDispatch } from "./store/hooks";
 import { getRefreshToken } from "src/store/authReducer";
 import DefaultContainer from "./layouts/DefaultContainer";
 import DefaultRoutes from "./routes/defaultRoutes";
+import { FlexBox } from "./components/FlexBox";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -22,12 +24,16 @@ export default function App() {
     interval;
     return clearInterval(interval);
   }, []);
+
   return (
-    <div>
-      <TopNav />
-      <DefaultContainer>
-        <DefaultRoutes />
-      </DefaultContainer>
-    </div>
+    <FlexBox flexDirection="row" alignItems="start" style={{ width: "100vw" }}>
+      <SideNav />
+      <div style={{ width: "100%" }}>
+        <TopNav />
+        <DefaultContainer>
+          <DefaultRoutes />
+        </DefaultContainer>
+      </div>
+    </FlexBox>
   );
 }

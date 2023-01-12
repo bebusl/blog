@@ -5,32 +5,38 @@ import { useQuery, gql } from "@apollo/client";
 import IconButton from "src/components/IconButton";
 
 const SideNav = () => {
-  const [nav, setNav] = useState(false);
+  const [openSideBar, setOpenSideBar] = useState(false);
   const { loading, data } = useQuery(GET_CATEGORIES, {
     variables: { category_: [] },
   });
+
   return (
-    <>
+    <Container>
       <IconButton
         onClick={() => {
-          setNav((prev) => !prev);
+          setOpenSideBar((prev) => !prev);
         }}
       />
-      <NavStyle nav={nav}>
+      <NavStyle nav={openSideBar}>
         {loading && <p>still Loading</p>}
         {data &&
           data.getCategoryInfo.map((adata: any) => (
             <Fragment key={adata.category.name}>
-              <h5>
-                <Link to={`/?category=${adata.category.id}`}>
-                  {adata.category.name}({adata.category.count})
-                </Link>
-              </h5>
+              <Link
+                to={`/?category=${adata.category.id}`}
+                style={{ fontWeight: 900 }}
+              >
+                {adata.category.name}({adata.category.count})
+              </Link>
 
               <ul>
                 {adata.tags.map(
                   (tag: { name: string; count: number; id: string }) => (
-                    <Link to={`/?tags=${tag.id}`} key={tag.id}>
+                    <Link
+                      to={`/?tags=${tag.id}`}
+                      key={tag.id}
+                      style={{ fontSize: "0.8rem" }}
+                    >
                       {tag.name}({tag.count})
                     </Link>
                   )
@@ -39,11 +45,17 @@ const SideNav = () => {
             </Fragment>
           ))}
       </NavStyle>
-    </>
+    </Container>
   );
 };
 
 export default SideNav;
+
+const Container = styled.div`
+  width: 50px;
+  z-index: 10000;
+  background-color: black;
+`;
 
 const NavStyle = styled.nav<{ nav: boolean }>`
   position: fixed;
@@ -55,7 +67,7 @@ const NavStyle = styled.nav<{ nav: boolean }>`
   width: 250px;
   min-height: 100vh;
   display: inline-block;
-  transform: ${({ nav }) => (nav ? "translateX(0)" : "translateX(-260px)")};
+  transform: ${({ nav }) => (nav ? "translateX(0)" : "translateX(-250px)")};
   transition-duration: 1s;
   margin: 0;
   & h5 {
