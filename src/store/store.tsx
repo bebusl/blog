@@ -1,14 +1,36 @@
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import {
+  combineReducers,
+  configureStore,
+  getDefaultMiddleware,
+} from "@reduxjs/toolkit";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REHYDRATE,
+  REGISTER,
+  persistReducer,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import authReducer from "./authReducer";
 
-//const store = createStore(reducer as Reducer, composeWithDevTools());
+const persistConfig = {
+  key: "auth",
+  storage,
+};
+
+const rootReducer = combineReducers({ auth: authReducer });
+const reduxPersistReducer = persistReducer(persistConfig, rootReducer);
+
 const store = configureStore({
-  reducer: {
-    auth: authReducer,
-  },
-  middleware: getDefaultMiddleware({ serializableCheck: false }),
+  reducer: reduxPersistReducer,
+  middleware: getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }),
 });
-//reducer 여러개 한개로 합쳐가지고 사용하는 법 배우기!
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
