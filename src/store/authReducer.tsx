@@ -63,7 +63,7 @@ export const authSlice = createSlice({
   reducers: {
     logoff: (state) => {
       clearCookie("refreshToken");
-      state = initialState;
+      return initialState;
     },
     updateLoginStatus: (state, action) => {
       console.log(action);
