@@ -1,34 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, FormEventHandler } from "react";
 import { useMutation, gql } from "@apollo/client";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { useAppSelector } from "src/store/hooks";
-
-const SplitView = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60vh;
-  width: 80vw;
-  & div,
-  & textarea {
-    height: 100%;
-    width: 50%;
-  }
-`;
-
-const Tag = styled.button`
-  color: #d3cdcd;
-  font-size: 0.7rem;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  border: 1px solid #d3cdcd;
-  box-shadow: gray 1px 1px 5px;
-  :after {
-    content: "X";
-  }
-`;
 
 const Writing = () => {
   const [attachment, setAttachment] = useState("");
@@ -112,29 +87,18 @@ const Writing = () => {
     },
   });
 
+  const handleSubmit: FormEventHandler = (e) => {
+    e.preventDefault();
+    if (attachment) upload({ variables: { file: attachment } });
+    else
+      posting({
+        variables: { title, tags, content: markdown, thumbnail: null },
+      });
+  };
+
   return (
     <>
-      <form
-        onSubmit={(e: any) => {
-          e.preventDefault();
-          if (attachment) {
-            upload({
-              variables: {
-                file: attachment,
-              },
-            });
-          } else {
-            posting({
-              variables: {
-                title: title,
-                tags: tags,
-                content: markdown,
-                thumbnail: null,
-              },
-            });
-          }
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <label htmlFor="title">제목</label>
         <input
           type="text"
@@ -148,45 +112,41 @@ const Writing = () => {
 
         <div>
           <span>태그</span>
-          <span
-            style={{
-              display: "inline-block",
-              width: "150px",
-              height: "2rem",
-              backgroundColor: "rgba(0,0,0,0.05)",
-            }}
-            contentEditable
-            ref={tagRef}
-            onKeyPress={(e) => {
-              const text = tagRef.current?.innerText.trim();
-              if (e.key === "Enter" && text && text.length > 0) {
-                e.preventDefault();
-                // contentEditable에서 enter를 입력하면 기본적으로 <br /> 엘레먼트가 추가된다.
-                // 우리는 Enter를 태그 추가의 의미로 사용할 것이므로 삭제!
-                setTags([...tags, text]);
-                if (tagRef.current) tagRef.current.innerText = "";
-              }
-            }}
-          />
-          <div>
-            {tags.map((tag: any, idx: Number) => {
-              return (
-                <Tag
-                  key={idx as React.Key}
-                  onClick={(e) => {
-                    setTags((prev) => {
-                      const idx = prev.indexOf(tag);
-                      prev.splice(idx, 1);
-                      const cur = [...prev];
-                      return cur;
-                    });
-                  }}
-                >
-                  {tag}
-                </Tag>
-              );
-            })}
-          </div>
+          <TagsWrapper>
+            <span
+              contentEditable
+              ref={tagRef}
+              onKeyPress={(e) => {
+                const text = tagRef.current?.innerText.trim();
+                if (e.key === "Enter" && text && text.length > 0) {
+                  e.preventDefault();
+                  // contentEditable에서 enter를 입력하면 기본적으로 <br /> 엘레먼트가 추가된다.
+                  // 우리는 Enter를 태그 추가의 의미로 사용할 것이므로 삭제!
+                  setTags([...tags, text]);
+                  if (tagRef.current) tagRef.current.innerText = "";
+                }
+              }}
+            />
+            <div>
+              {tags.map((tag: any, idx: Number) => {
+                return (
+                  <Tag
+                    key={idx as React.Key}
+                    onClick={(e) => {
+                      setTags((prev) => {
+                        const idx = prev.indexOf(tag);
+                        prev.splice(idx, 1);
+                        const cur = [...prev];
+                        return cur;
+                      });
+                    }}
+                  >
+                    {tag}
+                  </Tag>
+                );
+              })}
+            </div>
+          </TagsWrapper>
         </div>
         <SplitView>
           <textarea
@@ -215,3 +175,33 @@ const Writing = () => {
 };
 
 export default Writing;
+
+const SplitView = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  width: 80vw;
+  & div,
+  & textarea {
+    height: 100%;
+    width: 50%;
+  }
+`;
+
+const Tag = styled.button`
+  color: #4d4b4b;
+  font-size: 0.7rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid #d3cdcd;
+  box-shadow: gray 1px 1px 5px;
+  :after {
+    content: " X";
+  }
+`;
+
+const TagsWrapper = styled.div`
+  background-color: aliceblue;
+  border-radius: 10px;
+`;
