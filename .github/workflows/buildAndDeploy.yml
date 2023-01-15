@@ -41,5 +41,5 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         source: "dist/*"
-        target: "~/Web/blog"
+        target: "/Web/blog"
     
