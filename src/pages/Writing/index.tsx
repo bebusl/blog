@@ -214,6 +214,7 @@ const SplitView = styled.div`
   & textarea {
     height: 100%;
     width: 50%;
+    overflow-y: scroll;
   }
   *:nth-child(2) {
     background-color: #ebebeb;

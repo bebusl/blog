@@ -16,33 +16,39 @@ const Main = () => {
   const src = "https://jh-blog-api.yoonleeverse.com/file/serve/";
 
   return (
-    <>
-      <LMain>
-        {!loading && !data && <div>포스트가 없습니다.</div>}
-        {data?.getAllPost?.length > 0 ? (
-          data.getAllPost?.map((post: any, idx: Number) => (
-            <List
-              style={{
-                cursor: "pointer",
+    <LMain>
+      {!loading && !data && <div>포스트가 없습니다.</div>}
+      {data?.getAllPost?.length > 0 ? (
+        data.getAllPost?.map((post: any, idx: Number) => (
+          <List
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`/post/${post.postId}`);
+            }}
+            key={`list${idx}`}
+          >
+            <img
+              alt="img"
+              src={`${src}${post.thumbnail}`}
+              width="200px"
+              onError={(e) => {
+                const element = e.currentTarget;
+                if (element) element.src = "images/test.png";
               }}
-              onClick={(e) => {
-                e.preventDefault();
-                navigate(`/post/${post.postId}`);
-              }}
-              key={`list${idx}`}
-            >
-              <img alt="img" src={`${src}${post.thumbnail}`} width="200" />
-              <div>{post.title}</div>
-              <div>{new Date(post.createdDate).toLocaleString("ko-KR")}</div>
-              <div>{post.content}</div>
-            </List>
-          ))
-        ) : (
-          <div>포스트가 없습니다</div>
-        )}
-        {loading && <div>Loading...</div>}
-      </LMain>
-    </>
+            />
+            <div>{post.title}</div>
+            <div>{new Date(post.createdDate).toLocaleString("ko-KR")}</div>
+            <div>{post.content}</div>
+          </List>
+        ))
+      ) : (
+        <div>포스트가 없습니다</div>
+      )}
+      {loading && <div>Loading...</div>}
+    </LMain>
   );
 };
 

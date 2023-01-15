@@ -1,13 +1,13 @@
 import React, { useState, MouseEvent } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Modal from "src/shared/Modal";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { useAppSelector } from "src/store/hooks";
+
 const Contents = styled.div`
-  width: 720px;
-  height: 100vh;
+  width: 100%;
   margin: 2rem auto;
+  background-color: #f3f3f3;
   border: 1px solid #ededed;
 `;
 
@@ -17,6 +17,8 @@ const TagS = styled.span`
   height: 1.5rem;
   text-align: center;
   border: 1px solid #ededed;
+  background-color: white;
+  margin-right: 0.5rem;
   box-shadow: 1px 1px 1px #ededed;
   border-radius: 10px;
 `;
@@ -154,6 +156,7 @@ const Admin = () => {
 
   return (
     <>
+      <h1>카테고리 관리</h1>
       <Contents>
         <Modal
           on={on}

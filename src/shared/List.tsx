@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const List = styled.div`
   width: 100%;
-  height: 150px;
+  height: 200px;
+  overflow-y: hidden;
   margin: 1rem auto;
   background-color: white;
   color: #3a3a3a;
