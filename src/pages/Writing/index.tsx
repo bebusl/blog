@@ -1,4 +1,10 @@
-import React, { useState, useRef, FormEventHandler } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  FormEventHandler,
+} from "react";
 import { useMutation, gql } from "@apollo/client";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +19,18 @@ const Writing = () => {
   const tagRef = useRef<HTMLSpanElement>(null);
   const token = useAppSelector((state) => state.auth.authToken);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (previewImage) URL.revokeObjectURL(previewImage);
+    };
+  }, []);
+
+  const previewImage = useMemo(() => {
+    if (!attachment) return null;
+    const previewImageUrl = URL.createObjectURL(attachment);
+    return previewImageUrl;
+  }, [attachment]);
 
   const SEND_FILE = gql`
     mutation upload($file: Upload!) {
@@ -175,6 +193,7 @@ const Writing = () => {
           if (target.files) setAttachment(target.files[0]);
         }}
       />
+      {previewImage && <img src={previewImage} width="200px" />}
       <button type="submit" style={{ margin: 0 }}>
         글 작성
       </button>
