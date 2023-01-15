@@ -2,17 +2,18 @@ import React, { useState, useRef, FormEventHandler } from "react";
 import { useMutation, gql } from "@apollo/client";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import MarkdownViewer from "src/components/MarkdownViewer";
 import { useAppSelector } from "src/store/hooks";
 
 const Writing = () => {
-  const [attachment, setAttachment] = useState("");
+  const [attachment, setAttachment] = useState<File>();
   const [tags, setTags] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [markdown, setMarkdown] = useState("");
   const tagRef = useRef<HTMLSpanElement>(null);
   const token = useAppSelector((state) => state.auth.authToken);
   const navigate = useNavigate();
+
   const SEND_FILE = gql`
     mutation upload($file: Upload!) {
       upload(file: $file) {
@@ -97,80 +98,87 @@ const Writing = () => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">제목</label>
-        <input
-          type="text"
-          name="title"
-          value={title}
-          onInput={(e) => {
-            e.preventDefault();
-            setTitle(e.currentTarget.value);
-          }}
-        />
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        width: "100%",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Title
+        title="title"
+        type="text"
+        name="title"
+        placeholder="제목을 입력해주세요"
+        value={title}
+        onInput={(e) => {
+          e.preventDefault();
+          setTitle(e.currentTarget.value);
+        }}
+      />
 
-        <div>
-          <span>태그</span>
-          <TagsWrapper>
-            <span
-              contentEditable
-              ref={tagRef}
-              onKeyPress={(e) => {
-                const text = tagRef.current?.innerText.trim();
-                if (e.key === "Enter" && text && text.length > 0) {
-                  e.preventDefault();
-                  // contentEditable에서 enter를 입력하면 기본적으로 <br /> 엘레먼트가 추가된다.
-                  // 우리는 Enter를 태그 추가의 의미로 사용할 것이므로 삭제!
-                  setTags([...tags, text]);
-                  if (tagRef.current) tagRef.current.innerText = "";
-                }
-              }}
-            />
-            <div>
-              {tags.map((tag: any, idx: Number) => {
-                return (
-                  <Tag
-                    key={idx as React.Key}
-                    onClick={(e) => {
-                      setTags((prev) => {
-                        const idx = prev.indexOf(tag);
-                        prev.splice(idx, 1);
-                        const cur = [...prev];
-                        return cur;
-                      });
-                    }}
-                  >
-                    {tag}
-                  </Tag>
-                );
-              })}
-            </div>
-          </TagsWrapper>
-        </div>
-        <SplitView>
-          <textarea
-            onChange={(e) => {
-              e.preventDefault();
-              setMarkdown(e.target.value);
+      <TagsWrapper>
+        {tags.map((tag: any, idx: Number) => (
+          <Tag
+            key={idx as React.Key}
+            onClick={(e) => {
+              setTags((prev) => {
+                const idx = prev.indexOf(tag);
+                prev.splice(idx, 1);
+                const cur = [...prev];
+                return cur;
+              });
             }}
-            style={{ resize: "none" }}
-          />
-          <div>
-            <ReactMarkdown>{markdown}</ReactMarkdown>
-          </div>
-        </SplitView>
-        <label htmlFor="thumbnail">썸네일 이미지 선택</label>
-        <input
-          type="file"
-          id="thumbnail"
-          onChange={(e: any) => {
-            setAttachment(e.target.files[0]);
+          >
+            {tag}
+          </Tag>
+        ))}
+        <span
+          title="tag-input"
+          ref={tagRef}
+          contentEditable
+          placeholder="태그를 입력하세요"
+          onKeyPress={(e) => {
+            const text = tagRef.current?.innerText.trim();
+            if (e.key === "Enter" && text && text.length > 0) {
+              e.preventDefault();
+              // contentEditable에서 enter를 입력하면 기본적으로 <br /> 엘레먼트가 추가된다.
+              // 우리는 Enter를 태그 추가의 의미로 사용할 것이므로 삭제!
+              setTags([...tags, text]);
+              if (tagRef.current) tagRef.current.innerText = "";
+            }
           }}
         />
-        <button type="submit">글 작성</button>
-      </form>
-    </>
+      </TagsWrapper>
+      <SplitView>
+        <textarea
+          onChange={(e) => {
+            e.preventDefault();
+            setMarkdown(e.target.value);
+          }}
+          style={{ resize: "none", border: "none" }}
+        />
+        <div>
+          <MarkdownViewer content={markdown} />
+        </div>
+      </SplitView>
+      <ThumbnailSelectBtn htmlFor="thumbnail">
+        썸네일 이미지 선택
+      </ThumbnailSelectBtn>
+      <input
+        type="file"
+        id="thumbnail"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          const target = e.target;
+          if (target.files) setAttachment(target.files[0]);
+        }}
+      />
+      <button type="submit" style={{ margin: 0 }}>
+        글 작성
+      </button>
+    </form>
   );
 };
 
@@ -180,13 +188,23 @@ const SplitView = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60vh;
-  width: 80vw;
+  min-height: 60vh;
+  height: 100%;
+  width: 100%;
   & div,
   & textarea {
     height: 100%;
     width: 50%;
   }
+  *:nth-child(2) {
+    background-color: #ebebeb;
+  }
+`;
+
+const Title = styled.input`
+  background-color: inherit;
+  border: none;
+  font-size: 3rem;
 `;
 
 const Tag = styled.button`
@@ -202,6 +220,25 @@ const Tag = styled.button`
 `;
 
 const TagsWrapper = styled.div`
-  background-color: aliceblue;
-  border-radius: 10px;
+  margin: 0.5rem 0;
+  input {
+    border: none;
+  }
+  [contenteditable="true"]:empty:before {
+    content: attr(placeholder);
+    display: inline-block;
+    color: #b0adad;
+  }
+`;
+
+const ThumbnailSelectBtn = styled.label`
+  font-weight: bold;
+  background-color: #2f2f2f;
+  color: white;
+  width: fit-content;
+  cursor: pointer;
+  & + input {
+    background-color: red;
+    display: none;
+  }
 `;

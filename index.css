@@ -14,3 +14,8 @@ nav a:visited {
 a:link {
   color: #e5e5e5;
 }
+
+form {
+  background-color: inherit;
+  border: inherit;
+}
