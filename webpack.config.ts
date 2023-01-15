@@ -5,6 +5,7 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
@@ -68,6 +69,14 @@ const config: Configuration = {
         test: /\.css?$/,
         use: ["style-loader", "css-loader"],
       },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: "file-loader",
+          },
+        ],
+      },
     ],
   },
   plugins: [
@@ -84,27 +93,22 @@ const config: Configuration = {
   output: {
     path: path.join(__dirname, "dist"),
     filename: "index.js",
-    publicPath: "/dist/",
+    publicPath: "/dist",
   },
 
   devServer: {
-    historyApiFallback: true,
-    open: true,
     port: 4000,
+    historyApiFallback: true,
     static: {
-      directory: path.join(__dirname, "/"),
+      directory: path.resolve(__dirname, "dist"),
     },
-    // historyApiFallback: true,
-    // port: 3090,
-    // devMiddleware: { publicPath: "/dist/" },
-    // static: { directory: path.resolve(__dirname) },
-    // proxy: {
-    //     "/api/": {
-    //         target: "http://localhost:3095",
-    //         changeOrigin: true,
-    //         ws: true,
-    //     },
-    // },
+    allowedHosts: "all",
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "*",
+      "Access-Control-Allow-Headers": "*",
+    },
+    compress: true,
   },
   performance: {
     hints: false,
@@ -114,6 +118,7 @@ const config: Configuration = {
 };
 
 if (isDevelopment && config.plugins) {
+  console.log("DEVELOPMENT");
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.plugins.push(
     new ReactRefreshWebpackPlugin({
@@ -123,7 +128,20 @@ if (isDevelopment && config.plugins) {
     })
   );
   config.plugins.push(
-    new BundleAnalyzerPlugin({ analyzerMode: "server", openAnalyzer: true })
+    new BundleAnalyzerPlugin({ analyzerMode: "server", openAnalyzer: false })
+  );
+  config.plugins.push(
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "./public", globOptions: { ignore: ["**/index.html"] } },
+      ],
+    })
+  );
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+      publicPath: path.resolve(__dirname, "dist"),
+    })
   );
 }
 if (!isDevelopment && config.plugins) {
@@ -131,7 +149,20 @@ if (!isDevelopment && config.plugins) {
   config.plugins.push(
     new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false })
   );
-  config.plugins.push(new HtmlWebpackPlugin({ template: "./index.html" }));
+  config.plugins.push(
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "./public", globOptions: { ignore: ["**/index.html"] } },
+      ],
+    })
+  );
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+      publicPath: "./",
+      minify: true,
+    })
+  );
 }
 
 export default config;
