@@ -47,6 +47,8 @@
     "react-router-dom": "^6.2.1",
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
+    "remark-gfm": "^3.0.1",
+    "remark-unwrap-images": "^3.0.1",
     "styled-components": "^5.3.3",
     "styled-normalize": "^8.0.7",
     "ts-node": "^10.9.1",
