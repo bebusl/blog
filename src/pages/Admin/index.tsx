@@ -50,9 +50,9 @@ const CREATE_CATEGORIES = gql`
 const Admin = () => {
   const [on, setOn] = useState(false);
   const [categories, setCategories] = useState<ICategory & Object>({});
-  const [HH, setHH] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [tagId, setTagId] = useState<{ [name: string]: number }>({});
-  const { data, loading, error } = useQuery(GET_CATEGORIES, {
+  const {} = useQuery(GET_CATEGORIES, {
     variables: { category: [] },
     onCompleted: (data) => {
       const tmp = data.getCategoryInfo.reduce((initial: any, cur: any) => {
@@ -62,7 +62,7 @@ const Admin = () => {
           return tag.name;
         });
         setTagId((b) => ({ ...b, ...tmp_id }));
-        setHH((HH) => [...HH, ...ii]);
+        setTags((HH) => [...HH, ...ii]);
         initial[cur.category.name] = ii;
         return initial;
       }, {});
@@ -81,7 +81,7 @@ const Admin = () => {
       console.log("카테고리 성공?", h);
     },
     onError: (t) => {
-      console.log("카테고리 생성 실패", t);
+      window.alert("카테고리 생성을 실패했습니다");
     },
   });
 
@@ -89,12 +89,17 @@ const Admin = () => {
     [key: string]: string[];
   }
 
-  const DragTag: React.FC<{ tag: string }> = ({ children, tag }) => {
+  const DragTag: React.FC<{ tag: string; origin: string }> = ({
+    children,
+    tag,
+    origin,
+  }) => {
     return (
       <TagS
         draggable="true"
         onDragStart={(e) => {
           e.dataTransfer.setData("tagname", tag);
+          e.dataTransfer.setData("origin", origin);
         }}
       >
         {children}
@@ -116,7 +121,8 @@ const Admin = () => {
         e.preventDefault();
         e.stopPropagation();
         const data = e.dataTransfer.getData("tagname");
-        onAdd(category, data);
+        const origin = e.dataTransfer.getData("origin");
+        onAdd(category, data, origin);
       }}
     >
       {children}
@@ -138,17 +144,21 @@ const Admin = () => {
     create({ variables: { name: newName, tags: getId } });
   };
 
-  const onAdd = (category: string, tag: string) => {
+  const onAdd = (category: string, tag: string, origin: string) => {
+    const deleteFromOrigin = Array.from(categories[origin]);
+    deleteFromOrigin.splice(deleteFromOrigin.indexOf(tag), 1);
     if (categories.hasOwnProperty(category)) {
       if (!categories[category].includes(tag)) {
         setCategories({
           ...categories,
+          [origin]: deleteFromOrigin,
           [category]: [...categories[category], tag],
         });
       }
     } else {
       setCategories({
         ...categories,
+        [origin]: deleteFromOrigin,
         [category]: [tag],
       });
     }
@@ -162,14 +172,18 @@ const Admin = () => {
           on={on}
           exitModal={exitModal}
           addCategory={addCategory}
-          tags={HH}
+          tags={tags}
         />
         {Object.keys(categories).map((category: string, idx_cat) => {
           return (
             <>
               <h2 key={`cat-${idx_cat}`}>{category}</h2>
               {categories[category].map((tag, idx) => (
-                <DragTag key={`tag-${idx_cat}-${idx}`} tag={tag}>
+                <DragTag
+                  key={`tag-${idx_cat}-${idx}`}
+                  tag={tag}
+                  origin={category}
+                >
                   {tag}
                 </DragTag>
               ))}
