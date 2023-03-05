@@ -30,6 +30,12 @@ const config: Configuration = {
     },
   },
   entry: path.resolve(__dirname, "index.tsx"),
+  output: {
+    path: path.join(__dirname, "dist"),
+    publicPath: "/",
+    filename: isDevelopment ? "index.js" : "index.js",
+  },
+
   target: ["web", "es5"],
   module: {
     rules: [
@@ -90,17 +96,14 @@ const config: Configuration = {
       NODE_ENV: isDevelopment ? "development" : "production",
     }),
   ],
-  output: {
-    path: path.join(__dirname, "dist"),
-    filename: "index.js",
-    publicPath: "/dist",
-  },
 
   devServer: {
     port: 4000,
-    historyApiFallback: true,
+    historyApiFallback: { disableDotRule: true, index: "/" },
     static: {
-      directory: path.resolve(__dirname, "dist"),
+      directory: path.resolve(__dirname, "public"),
+      publicPath: ["/"],
+      watch: { ignored: "/Users/jh/Desktop/PROJECT/blog/node_modules/" },
     },
     allowedHosts: "all",
     headers: {
@@ -108,7 +111,11 @@ const config: Configuration = {
       "Access-Control-Allow-Methods": "*",
       "Access-Control-Allow-Headers": "*",
     },
-    compress: true,
+    client: {
+      logging: "log",
+      progress: true,
+    },
+    devMiddleware: { publicPath: "" },
   },
   performance: {
     hints: false,
@@ -119,31 +126,19 @@ const config: Configuration = {
 
 if (isDevelopment && config.plugins) {
   console.log("DEVELOPMENT");
-  config.plugins.push(new webpack.HotModuleReplacementPlugin());
-  config.plugins.push(
-    new ReactRefreshWebpackPlugin({
-      overlay: {
-        useURLPolyfill: true,
-      },
-    })
-  );
+  config.plugins.push(new ReactRefreshWebpackPlugin());
   config.plugins.push(
     new BundleAnalyzerPlugin({ analyzerMode: "server", openAnalyzer: false })
   );
   config.plugins.push(
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: "./public", globOptions: { ignore: ["**/index.html"] } },
-      ],
-    })
-  );
-  config.plugins.push(
     new HtmlWebpackPlugin({
       template: "./public/index.html",
-      publicPath: path.resolve(__dirname, "dist"),
+      publicPath: "/",
+      title: "DEVELOPMENT",
     })
   );
 }
+
 if (!isDevelopment && config.plugins) {
   config.plugins.push(new webpack.LoaderOptionsPlugin({ minimize: true }));
   config.plugins.push(
@@ -159,7 +154,7 @@ if (!isDevelopment && config.plugins) {
   config.plugins.push(
     new HtmlWebpackPlugin({
       template: "./public/index.html",
-      publicPath: "./",
+      publicPath: "/",
       minify: true,
     })
   );
