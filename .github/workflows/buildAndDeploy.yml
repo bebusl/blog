@@ -28,7 +28,7 @@ jobs:
 
     - name: build
       run: |
-        npm install
+        npm install --legacy-peer-deps
         npm run build
         echo "산출물"
         ls dist
@@ -41,5 +41,5 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         source: "dist/*"
-        target: "~/Web/blog"
+        target: "/Web/blog"
     
