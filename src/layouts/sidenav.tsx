@@ -55,6 +55,9 @@ const Container = styled.div`
   width: 50px;
   z-index: 10000;
   background-color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
 `;
 
 const NavStyle = styled.nav<{ nav: boolean }>`

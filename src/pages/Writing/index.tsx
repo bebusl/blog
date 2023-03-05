@@ -68,7 +68,6 @@ const Writing = () => {
       console.error("에러남", error);
     },
     onCompleted: (data) => {
-      console.log("성공", data);
       navigate("/");
     },
     context: {
