@@ -1,3 +1,7 @@
+body {
+  background: rgb(248, 248, 248);
+}
+
 a {
   color: inherit;
 }
@@ -8,14 +12,35 @@ a:visited {
 
 nav a,
 nav a:visited {
-  color: #ededed;
+  color: #fff8f8;
 }
 
 a:link {
-  color: #e5e5e5;
+  color: #fff8f8;
 }
 
 form {
   background-color: inherit;
   border: inherit;
+}
+
+.utterances {
+  min-width: 900px;
+  width: 100%;
+  margin-left: 0;
+}
+
+nav a:hover,
+nav a:focus,
+nav a:visited:hover,
+nav a:visited:focus {
+  color: black;
+}
+
+@media screen and (max-width: 800px) {
+  .utterances {
+    min-width: 250px;
+    width: 100%;
+    margin-left: 0;
+  }
 }

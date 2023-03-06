@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const List = styled.div`
-  width: 100%;
+  width: 90%;
   height: 200px;
   overflow-y: hidden;
   margin: 1rem auto;
@@ -32,5 +32,14 @@ export const List = styled.div`
     font-weight: light;
     font-size: 0.9rem;
     grid-row: 4/9;
+    max-height: 6em;
+    display: -webkit-box;
+    display: -moz-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    line-height: 1.5em;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
   }
 `;

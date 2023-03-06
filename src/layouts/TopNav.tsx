@@ -15,9 +15,10 @@ const TopNav = () => {
   return (
     <TopNavStyle>
       <DefaultContainer flexDirection="row" justifyContent="space-between">
-        <div>
+        <div style={{ marginLeft: "50px" }}>
           <Link to="/">{blogTitle}</Link>
         </div>
+
         {isLogin && (
           <MenuBox>
             <Link to="/writing">글쓰기</Link>
@@ -45,7 +46,7 @@ const TopNav = () => {
 
 export default TopNav;
 
-const TopNavStyle = styled.ul`
+const TopNavStyle = styled.header`
   list-style-type: none;
   z-index: 10;
   height: 60px;
@@ -54,19 +55,9 @@ const TopNavStyle = styled.ul`
   top: 0;
   left: 0;
   margin: 0;
+  padding: 0;
   background-color: #323232;
   color: white;
-
-  & li {
-    line-height: 60px;
-    float: left;
-    color: white;
-    margin: auto1 1rem;
-  }
-
-  & li:after {
-    clear: both;
-  }
 `;
 
 const MenuBox = styled.div`
