@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -10,11 +10,13 @@ import { logoff } from "src/store/authReducer";
 const TopNav = () => {
   const { isLogin, authToken } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const blogTitle = localStorage.getItem("blog-title") || "Blog Home";
+
   return (
     <TopNavStyle>
       <DefaultContainer flexDirection="row" justifyContent="space-between">
         <div>
-          <Link to="/">BlogHome</Link>
+          <Link to="/">{blogTitle}</Link>
         </div>
         {isLogin && (
           <MenuBox>
@@ -47,12 +49,12 @@ const TopNavStyle = styled.ul`
   list-style-type: none;
   z-index: 10;
   height: 60px;
-  width: calc(100vw - 50px);
+  width: 100vw;
   position: sticky;
   top: 0;
   left: 0;
   margin: 0;
-  background-color: black;
+  background-color: #323232;
   color: white;
 
   & li {

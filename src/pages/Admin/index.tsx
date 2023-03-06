@@ -1,4 +1,9 @@
-import React, { useState, MouseEvent } from "react";
+import React, {
+  useState,
+  MouseEvent,
+  useMemo,
+  ChangeEventHandler,
+} from "react";
 import styled from "styled-components";
 import Modal from "src/shared/Modal";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -7,8 +12,10 @@ import { useAppSelector } from "src/store/hooks";
 const Contents = styled.div`
   width: 100%;
   margin: 2rem auto;
+  padding: 1rem;
   background-color: #f3f3f3;
   border: 1px solid #ededed;
+  border-radius: 5px;
 `;
 
 const TagS = styled.span`
@@ -52,6 +59,15 @@ const Admin = () => {
   const [categories, setCategories] = useState<ICategory & Object>({});
   const [tags, setTags] = useState<string[]>([]);
   const [tagId, setTagId] = useState<{ [name: string]: number }>({});
+  const [blogTitle, setBlogTitle] = useState(
+    localStorage.getItem("blog-title") || "Blog Home"
+  );
+
+  const handleChangeTitle: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const { value } = e.target;
+    setBlogTitle(value);
+  };
+
   const {} = useQuery(GET_CATEGORIES, {
     variables: { category: [] },
     onCompleted: (data) => {
@@ -175,6 +191,7 @@ const Admin = () => {
           tags={tags}
         />
         {Object.keys(categories).map((category: string, idx_cat) => {
+          if (category === "" || category === "dggg") return <></>;
           return (
             <>
               <h2 key={`cat-${idx_cat}`}>{category}</h2>
@@ -193,8 +210,18 @@ const Admin = () => {
             </>
           );
         })}
-        <button onClick={createCategoryBtn}>Add Category</button>
+        <button onClick={createCategoryBtn}>카테고리 추가</button>
       </Contents>
+      <h1>블로그 이름 수정</h1>
+      <input value={blogTitle} onChange={handleChangeTitle} />
+      <button
+        onClick={() => {
+          localStorage.setItem("blog-title", blogTitle);
+          location.reload();
+        }}
+      >
+        수정
+      </button>
     </>
   );
 };

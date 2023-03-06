@@ -20,30 +20,31 @@ const SideNav = () => {
       <NavStyle nav={openSideBar}>
         {loading && <p>still Loading</p>}
         {data &&
-          data.getCategoryInfo.map((adata: any) => (
-            <Fragment key={adata.category.name}>
-              <Link
-                to={`/?category=${adata.category.id}`}
-                style={{ fontWeight: 900 }}
-              >
-                {adata.category.name}({adata.category.count})
-              </Link>
+          data.getCategoryInfo.map((adata: any) => {
+            const { name: categoryName, id, count } = adata.category;
+            if (categoryName === "" || categoryName === "dggg") return <></>;
+            return (
+              <Fragment key={categoryName}>
+                <Link to={`/?category=${id}`} style={{ fontWeight: 900 }}>
+                  {categoryName}({count})
+                </Link>
 
-              <ul>
-                {adata.tags.map(
-                  (tag: { name: string; count: number; id: string }) => (
-                    <Link
-                      to={`/?tags=${tag.id}`}
-                      key={tag.id}
-                      style={{ fontSize: "0.8rem" }}
-                    >
-                      {tag.name}({tag.count})
-                    </Link>
-                  )
-                )}
-              </ul>
-            </Fragment>
-          ))}
+                <ul>
+                  {adata.tags.map(
+                    (tag: { name: string; count: number; id: string }) => (
+                      <Link
+                        to={`/?tags=${tag.id}`}
+                        key={tag.id}
+                        style={{ fontSize: "0.8rem" }}
+                      >
+                        {tag.name}({tag.count})
+                      </Link>
+                    )
+                  )}
+                </ul>
+              </Fragment>
+            );
+          })}
       </NavStyle>
     </Container>
   );

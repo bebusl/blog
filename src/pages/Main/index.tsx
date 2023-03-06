@@ -10,10 +10,11 @@ const LMain = styled.div`
   margin: 0 auto;
 `;
 
+const src = "https://jh-blog-api.yoonleeverse.com/file/serve/";
+
 const Main = () => {
   const navigate = useNavigate();
   const { data, loading, error } = usePosts();
-  const src = "https://jh-blog-api.yoonleeverse.com/file/serve/";
 
   return (
     <LMain>
